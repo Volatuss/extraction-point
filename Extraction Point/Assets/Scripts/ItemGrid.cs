@@ -12,12 +12,10 @@ public class ItemGrid : MonoBehaviour
     RectTransform rectTransform;
     Vector2 positionOnTheGrid = new Vector2();
     Vector2Int tileGridPosition = new Vector2Int();
-
     public String inventoryType = "Inventory";
-
-
-
     InventoryItem[,] inventoryItemSlot;
+    public int itemCount = 0;
+
     private void Start() 
     {
         rectTransform = GetComponent<RectTransform>();
@@ -31,11 +29,12 @@ public class ItemGrid : MonoBehaviour
         if (toReturn == null) { return null; }
 
         CleanGridReference(toReturn);
+        
 
         return toReturn;
     }
 
-    private void CleanGridReference(InventoryItem item)
+    public void CleanGridReference(InventoryItem item)
     {
         for (int ix = 0; ix < item.WIDTH; ix++)
         { //removing whole item
@@ -87,6 +86,15 @@ public class ItemGrid : MonoBehaviour
         return null;
     }
 
+    internal void ClearWholeGrid()
+    {
+        for(int x = 0; x < gridSizeHeight-1; x++){
+            for(int y = 0; y< gridSizeWidth-1; y++){
+                inventoryItemSlot[x,y] = null;
+            }
+        }
+    }
+
     public bool PlaceItem(InventoryItem inventoryItem, int posX, int posY, ref InventoryItem overlapItem)
     {
 
@@ -105,6 +113,7 @@ public class ItemGrid : MonoBehaviour
             CleanGridReference(overlapItem);
         }
         PlaceItem(inventoryItem, posX, posY);
+        
 
 
         return true;
@@ -187,5 +196,13 @@ public class ItemGrid : MonoBehaviour
 
         return true;
     }
+
+    public bool isLootGrid(){
+        if(inventoryType.CompareTo("LootInv") == 0){
+            return true;
+        }
+        return false;
+    }
     
 }
+

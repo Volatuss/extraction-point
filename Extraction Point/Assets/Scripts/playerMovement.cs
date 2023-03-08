@@ -25,7 +25,7 @@ public class playerMovement : MonoBehaviour
 
     
     void FixedUpdate(){
-    if(canMove){
+    if(canMove && !InventoryController.isInvOpen){
             if(movementInput != Vector2.zero){
                 bool success = TryMove(movementInput);
                 if(!Input.GetKey(KeyCode.LeftShift)){
@@ -39,7 +39,6 @@ public class playerMovement : MonoBehaviour
                     animator.SetBool("isMoving", success);
                     animator.SetFloat("inputX", movementInput.x);
                     animator.SetFloat("inputY", movementInput.y);
-                    Debug.Log(movementInput);
                 }else{
                     if(!success && movementInput.x > 0){
                     success = TryMove(new Vector2(movementInput.x, 0));

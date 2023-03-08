@@ -15,7 +15,10 @@ public class InventoryController : MonoBehaviour
             selectedItemGrid = value;
             inventoryHighlight.SetParent(value);
         }
-    }   
+    } 
+    [SerializeField] ItemGrid InventoryGrid;  
+    [SerializeField] ItemGrid LootGrid;  
+    [SerializeField] GameObject inventoryInterface;
     InventoryItem selectedItem;
     InventoryItem overlapItem;
     InventoryItem itemToHighlight;
@@ -24,13 +27,18 @@ public class InventoryController : MonoBehaviour
     [SerializeField] GameObject itemPrefab;
     [SerializeField] Transform canvasTransform;
     [SerializeField] TextMeshProUGUI totalWeightText;
+    [SerializeField] TextMeshProUGUI lootLabel;
+    [SerializeField] GameObject rightClickContext;
     public float totalWeight = 0.0f; //wip
+    InventoryItem[] itemsToInsert;
+    public static bool isInvOpen = false;
 
     InventoryHighlight inventoryHighlight;
     Vector2 oldPositon;
 
     private void Awake() {
         inventoryHighlight = GetComponent<InventoryHighlight>();
+        
     }
 
     private void Update()
@@ -42,12 +50,19 @@ public class InventoryController : MonoBehaviour
             }
         }
 
-        if(Input.GetKeyDown(KeyCode.W)){
+        if(Input.GetKeyDown(KeyCode.W) && isInvOpen){
             InsertRandomItem();
+        }
+        if(Input.GetKeyDown(KeyCode.I)){
+            if(isInvOpen){
+                
+            }
+            inventoryInterface.SetActive(!isInvOpen);
+            isInvOpen = !isInvOpen;
         }
         if(Input.GetKeyDown(KeyCode.R)){
             RotateItem();
-            Debug.Log(selectedItemGrid.inventoryType);
+            //Debug.Log(selectedItemGrid.inventoryType);
         }
 
         if (selectedItemGrid == null) { 
@@ -57,10 +72,51 @@ public class InventoryController : MonoBehaviour
 
         HandleHighlight();
  
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftControl) )
         {
+            QuickTransferItem();     
+        }else if (Input.GetMouseButtonDown(0)){
             LeftMouseButtonPress();
         }
+    }
+
+    
+
+    public void OpenInventoryInterface(){
+        inventoryInterface.SetActive(!isInvOpen);
+        isInvOpen = !isInvOpen;
+    }
+
+    private void QuickTransferItem() //working for now, if controlClick on item
+    {
+        if(selectedItemGrid.CompareTag("LootInv")){ //from loot to inventory
+            Debug.Log("ToInv");
+            toInventory();
+        }else if(selectedItemGrid.CompareTag("Inventory")){ //from inventory to loot
+            Debug.Log("FromInv");
+            fromInventory();
+        }
+    }
+
+    private void toInventory() //to make containers, remove an item from the containers item list, this is also where I can generate the items??
+    {
+        Vector2Int positionOnGrid = GetTileGridPosition();
+        InventoryItem itemToTransfer = selectedItemGrid.GetItem(positionOnGrid.x, positionOnGrid.y);;
+        if(itemToTransfer == null){return;}
+        Vector2Int? posOnGrid = InventoryGrid.FindSpaceForObject(itemToTransfer);
+        if(posOnGrid == null){return;}
+        LootGrid.CleanGridReference(itemToTransfer);
+        InventoryGrid.PlaceItem(itemToTransfer, posOnGrid.Value.x, posOnGrid.Value.y);
+    }
+    private void fromInventory()
+    {
+        Vector2Int positionOnGrid = GetTileGridPosition();
+        InventoryItem itemToTransfer = selectedItemGrid.GetItem(positionOnGrid.x, positionOnGrid.y);;
+        if(itemToTransfer == null){return;}
+        Vector2Int? posOnGrid = LootGrid.FindSpaceForObject(itemToTransfer);
+        if(posOnGrid == null){return;}
+        InventoryGrid.CleanGridReference(itemToTransfer);
+        LootGrid.PlaceItem(itemToTransfer, posOnGrid.Value.x, posOnGrid.Value.y);
     }
 
     private void RotateItem()
@@ -71,33 +127,29 @@ public class InventoryController : MonoBehaviour
 
     private void InsertRandomItem()
     {
+        if(selectedItemGrid == null){return; }
         CreateRandomItem();
         InventoryItem itemToInsert = selectedItem;
         selectedItem = null;
         InsertItem(itemToInsert);
     }
 
-
     private void InsertItem(InventoryItem itemToInsert)
     {
-        //if(selectedItem == null){return;} //avoid error outside of grid
-
         Vector2Int? posOnGrid = selectedItemGrid.FindSpaceForObject(itemToInsert);
         if(posOnGrid == null){return;}
         selectedItemGrid.PlaceItem(itemToInsert, posOnGrid.Value.x, posOnGrid.Value.y);
         
-        //AddWeight(itemToInsert);
     }
 
     private void HandleHighlight()
     {   
-        
+        if(!isInvOpen){return;}
         Vector2Int positionOnGrid = GetTileGridPosition();
         if(oldPositon == positionOnGrid){return;}
         oldPositon = positionOnGrid;
         
         if(selectedItem == null){
-
             itemToHighlight = selectedItemGrid.GetItem(positionOnGrid.x, positionOnGrid.y);
             if(itemToHighlight != null){
                 inventoryHighlight.Show(true);
@@ -188,5 +240,10 @@ public class InventoryController : MonoBehaviour
         {
             rectTransform.position = Input.mousePosition;
         }
+    }
+
+    public void LoadLoot() //when a container is opened need to process the list of items from the container object and place the items in the container, we also need to clear this once we close the container
+    {
+
     }
 }
