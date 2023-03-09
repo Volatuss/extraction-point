@@ -7,15 +7,17 @@ public class PlayerController : MonoBehaviour
     [SerializeField] GameObject lootToolTip;
     [SerializeField] GameObject InventoryInterface;
     [SerializeField] private FieldOfView fieldOfView;
-    private bool aimDownSights = false;
+    
     public static bool isObjectLootable = false;
     
 
     void Update()
     {
+
+        /*
         Vector3 targetPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3 aimDir = (targetPosition - transform.position).normalized;
-        fieldOfView.SetAimDirection(aimDir);
+        fieldOfView.SetAimDirection(aimDir);*/
         fieldOfView.SetOrigin(transform.position);
 
 
@@ -24,6 +26,7 @@ public class PlayerController : MonoBehaviour
             InventoryController.isInvOpen = true;
         }    
 
+        /*
         if(Input.GetMouseButtonDown(1)){
             aimDownSights = !aimDownSights;
             if(aimDownSights){
@@ -37,7 +40,7 @@ public class PlayerController : MonoBehaviour
                 fieldOfView.SetFoV(120f);
             
             }
-        }
+        }*/
     }
 
     private void OnTriggerEnter2D(Collider2D other) {

@@ -15,9 +15,9 @@ MonoBehaviour:
   m_Active: 1
   settings:
     passTag: BehindMask
-    Event: 300
+    Event: 500
     filterSettings:
-      RenderQueueType: 0
+      RenderQueueType: 1
       LayerMask:
         serializedVersion: 2
         m_Bits: 128
@@ -54,9 +54,9 @@ MonoBehaviour:
   m_Active: 1
   settings:
     passTag: Black
-    Event: 300
+    Event: 500
     filterSettings:
-      RenderQueueType: 0
+      RenderQueueType: 1
       LayerMask:
         serializedVersion: 2
         m_Bits: 256
@@ -67,9 +67,9 @@ MonoBehaviour:
     depthCompareFunction: 4
     enableWrite: 1
     stencilSettings:
-      overrideStencilState: 0
-      stencilReference: 0
-      stencilCompareFunction: 8
+      overrideStencilState: 1
+      stencilReference: 1
+      stencilCompareFunction: 6
       passOperation: 0
       failOperation: 0
       zFailOperation: 0
@@ -157,7 +157,7 @@ MonoBehaviour:
     passTag: Default
     Event: 300
     filterSettings:
-      RenderQueueType: 0
+      RenderQueueType: 1
       LayerMask:
         serializedVersion: 2
         m_Bits: 63
@@ -194,9 +194,9 @@ MonoBehaviour:
   m_Active: 1
   settings:
     passTag: Mask
-    Event: 300
+    Event: 500
     filterSettings:
-      RenderQueueType: 0
+      RenderQueueType: 1
       LayerMask:
         serializedVersion: 2
         m_Bits: 64

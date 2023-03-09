@@ -37,7 +37,10 @@
             "m_Id": "02fac3f1403c469aae7bb3f528795280"
         },
         {
-            "m_Id": "1882605eae6e413da0f11d40052621c3"
+            "m_Id": "13d2a332f1664289ad72094478ee7097"
+        },
+        {
+            "m_Id": "d5a76c18a74d42fdbacc4911a3fc2196"
         }
     ],
     "m_GroupDatas": [],
@@ -46,13 +49,27 @@
         {
             "m_OutputSlot": {
                 "m_Node": {
-                    "m_Id": "1882605eae6e413da0f11d40052621c3"
+                    "m_Id": "13d2a332f1664289ad72094478ee7097"
                 },
                 "m_SlotId": 0
             },
             "m_InputSlot": {
                 "m_Node": {
                     "m_Id": "02fac3f1403c469aae7bb3f528795280"
+                },
+                "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "d5a76c18a74d42fdbacc4911a3fc2196"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "2fc34eb0cf3e406288e6089cc8f85aab"
                 },
                 "m_SlotId": 0
             }
@@ -204,25 +221,25 @@
 
 {
     "m_SGVersion": 0,
-    "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
-    "m_ObjectId": "1882605eae6e413da0f11d40052621c3",
+    "m_Type": "UnityEditor.ShaderGraph.SliderNode",
+    "m_ObjectId": "13d2a332f1664289ad72094478ee7097",
     "m_Group": {
         "m_Id": ""
     },
-    "m_Name": "Property",
+    "m_Name": "Slider",
     "m_DrawState": {
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -199.0,
-            "y": 362.0,
-            "width": 105.0,
-            "height": 34.0
+            "x": -365.0,
+            "y": 312.0,
+            "width": 231.99998474121095,
+            "height": 146.00003051757813
         }
     },
     "m_Slots": [
         {
-            "m_Id": "91c35038b11b4ca9b7ddbd416e87a2bf"
+            "m_Id": "8deb3f2443ce4653b970ee39ff0f01c9"
         }
     ],
     "synonyms": [],
@@ -232,8 +249,10 @@
     "m_CustomColors": {
         "m_SerializableColors": []
     },
-    "m_Property": {
-        "m_Id": "e8e57676aa24422598a2a9a91b51d73a"
+    "m_Value": {
+        "x": 0.009999999776482582,
+        "y": 0.0,
+        "z": 1.0
     }
 }
 
@@ -334,6 +353,31 @@
         "m_SerializableColors": []
     },
     "m_SerializedDescriptor": "VertexDescription.Normal"
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector4MaterialSlot",
+    "m_ObjectId": "5203bea89c7248f9a2de578d505b5153",
+    "m_Id": 0,
+    "m_DisplayName": "Out",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_Value": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    },
+    "m_DefaultValue": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    },
+    "m_Labels": []
 }
 
 {
@@ -489,9 +533,9 @@
 {
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
-    "m_ObjectId": "91c35038b11b4ca9b7ddbd416e87a2bf",
+    "m_ObjectId": "8deb3f2443ce4653b970ee39ff0f01c9",
     "m_Id": 0,
-    "m_DisplayName": "Alpha",
+    "m_DisplayName": "Out",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -592,6 +636,49 @@
             "m_Id": "e8e57676aa24422598a2a9a91b51d73a"
         }
     ]
+}
+
+{
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.ColorNode",
+    "m_ObjectId": "d5a76c18a74d42fdbacc4911a3fc2196",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Color",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -365.0,
+            "y": 171.0,
+            "width": 208.0,
+            "height": 127.0
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "5203bea89c7248f9a2de578d505b5153"
+        }
+    ],
+    "synonyms": [
+        "rgba"
+    ],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Color": {
+        "color": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 0.0
+        },
+        "mode": 0
+    }
 }
 
 {

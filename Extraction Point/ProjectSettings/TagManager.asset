@@ -7,6 +7,8 @@ TagManager:
   - Inventory
   - LootInv
   - Container
+  - Obstacle
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -43,4 +45,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Top
+    uniqueID: 428201963
     locked: 0
