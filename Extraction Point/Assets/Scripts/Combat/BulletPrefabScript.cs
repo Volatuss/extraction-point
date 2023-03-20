@@ -6,8 +6,10 @@ public class BulletPrefabScript : MonoBehaviour
 {
     
     [SerializeField] private float projectileLifetime; //time in seconds for projectile to exist.
+    Rigidbody2D rb;
     void Start()
     {
+        rb = GetComponent<Rigidbody2D>();
         Destroy(gameObject, projectileLifetime);
     }
 
@@ -15,9 +17,10 @@ public class BulletPrefabScript : MonoBehaviour
         if(collision.CompareTag("Obstacle")){
             Destroy(gameObject);
         }else if(collision.CompareTag("Enemy") || collision.CompareTag("Player")){
-            
+            BloodParticleSystemHandler.Instance.SpawnGore(transform.position, rb.velocity.normalized);
+            Destroy(gameObject);
         }
-    }
+    }   
 
     
 

@@ -43,6 +43,14 @@ public class InventoryController : MonoBehaviour
 
     private void Update()
     {
+        if(Input.GetKeyDown(KeyCode.I)){
+            if(isInvOpen){
+                
+            }
+            inventoryInterface.SetActive(!isInvOpen);
+            isInvOpen = !isInvOpen;
+        }   
+        if(isInvOpen == false){return; }
         ItemIconDrag();
         if(Input.GetKeyDown(KeyCode.Q)){
             if(selectedItem == null){
@@ -53,13 +61,7 @@ public class InventoryController : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.W) && isInvOpen){
             InsertRandomItem();
         }
-        if(Input.GetKeyDown(KeyCode.I)){
-            if(isInvOpen){
-                
-            }
-            inventoryInterface.SetActive(!isInvOpen);
-            isInvOpen = !isInvOpen;
-        }
+        
         if(Input.GetKeyDown(KeyCode.R)){
             RotateItem();
             //Debug.Log(selectedItemGrid.inventoryType);

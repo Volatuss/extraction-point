@@ -82,17 +82,10 @@ public class playerMovement : MonoBehaviour
     void OnMove(InputValue movementValue) {
         movementInput = movementValue.Get<Vector2>();
     }
-
-    void OnFire(){
-        //animator.SetTrigger("swordAttack");
-    }
-
     public void lockMovement(){
         canMove = false;
     }
-
     public void unlockMovement(){
         canMove = true;
     }
-    
 }

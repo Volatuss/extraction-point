@@ -19,6 +19,8 @@ public class MeshParticleSystem : MonoBehaviour
     }
     private Mesh mesh;
 
+ 
+
     [SerializeField] private ParticleUVPixels[] particleUVPixelsArray;
     private UVCoords[] uVCoordsArray;
 
@@ -84,6 +86,8 @@ public class MeshParticleSystem : MonoBehaviour
         vertices[vIndex1] = position + Quaternion.Euler(0, 0, rotation - 270) * quadSize; //up left
         vertices[vIndex2] = position + Quaternion.Euler(0, 0, rotation - 0) * quadSize; //low right
         vertices[vIndex3] = position + Quaternion.Euler(0, 0, rotation - 90) * quadSize; //up right
+
+        
 
         //UV 
         UVCoords uvCoords = uVCoordsArray[uvIndex]; 
