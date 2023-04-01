@@ -41,6 +41,12 @@ public class InventoryItem : MonoBehaviour
         
     }
 
+    internal int Get(ItemData itemData){
+        this.itemData = itemData;
+        
+        return itemData.itemID;
+    }
+
     internal void Rotate(){
         rotated = !rotated;
 

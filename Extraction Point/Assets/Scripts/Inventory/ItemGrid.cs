@@ -7,7 +7,7 @@ public class ItemGrid : MonoBehaviour
 {
     public const float tileSizeWidth = 48;
     public const float tileSizeHeight = 48;
-    [SerializeField] int gridSizeWidth = 10, gridSizeHeight = 14;
+    [SerializeField] public int gridSizeWidth = 10, gridSizeHeight = 14;
     [SerializeField] GameObject inventoryItemPrefab;
     RectTransform rectTransform;
     Vector2 positionOnTheGrid = new Vector2();
@@ -20,11 +20,50 @@ public class ItemGrid : MonoBehaviour
     {
         rectTransform = GetComponent<RectTransform>();
         Init(gridSizeWidth, gridSizeHeight);
+        
+    }
+
+    public void DisplayContents(){
+        Debug.Log("Start of Display");
+        
+        String toDisplay = "@";
+        for(int x = 0; x < gridSizeHeight; x++){
+            for(int y = 0; y < gridSizeWidth; y++){
+                //Debug.Log(x+", "+y);
+                if(inventoryItemSlot[y,x] == null){
+                    toDisplay = toDisplay + "0 ";
+                }else{
+                    toDisplay = toDisplay + inventoryItemSlot[y,x].itemData.itemID.ToString() + " ";
+                }
+            }
+            toDisplay = toDisplay + "@";
+            
+        }
+        
+        toDisplay = toDisplay.Replace("@", "" + System.Environment.NewLine);
+        Debug.Log(toDisplay);
+        Debug.Log("End of Display");
+    }
+
+
+    public bool ContainsItem(ItemData itemData){
+        
+        for(int x = 0; x < gridSizeHeight; x++){
+            for(int y = 0; y < gridSizeWidth; y++){
+                
+                    
+                if(inventoryItemSlot[y,x].itemData == itemData){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public InventoryItem PickUpItem(int x, int y)
     {
         InventoryItem toReturn = inventoryItemSlot[x, y];
+        
 
         if (toReturn == null) { return null; }
 
@@ -36,6 +75,9 @@ public class ItemGrid : MonoBehaviour
 
     public void CleanGridReference(InventoryItem item)
     {
+        if(transform.name == "InvGrid"){
+            InventoryController.InventoryItems.Remove(new Vector2(item.onGridPositionX, item.onGridPositionY));
+        }
         for (int ix = 0; ix < item.WIDTH; ix++)
         { //removing whole item
             for (int iy = 0; iy < item.HEIGHT; iy++)
@@ -71,7 +113,7 @@ public class ItemGrid : MonoBehaviour
 
     public Vector2Int? FindSpaceForObject(InventoryItem itemToInsert) //resource heavy, optimize this 
     {
-        int height = gridSizeHeight - itemToInsert.HEIGHT + 1;
+        int height = gridSizeHeight - itemToInsert.HEIGHT + 1; // 1x2 item: width = 10, height = 13
         int width = gridSizeWidth - itemToInsert.WIDTH + 1;
         for(int y = 0; y<height; y++)
         {
@@ -97,6 +139,7 @@ public class ItemGrid : MonoBehaviour
 
     public bool PlaceItem(InventoryItem inventoryItem, int posX, int posY, ref InventoryItem overlapItem)
     {
+        
 
         if (BoundryCheck(posX, posY, inventoryItem.WIDTH, inventoryItem.HEIGHT) == false)
         {
@@ -122,7 +165,12 @@ public class ItemGrid : MonoBehaviour
     public void PlaceItem(InventoryItem inventoryItem, int posX, int posY)
     {
         RectTransform rectTransform = inventoryItem.GetComponent<RectTransform>();
-        InventoryItem itemToWeigh = inventoryItem;
+
+        if(transform.name == "InvGrid"){
+            InventoryController.InventoryItems.Add(new Vector2(posX, posY), inventoryItem.itemData);
+        }
+        //InventoryItem itemToWeigh = inventoryItem;
+
         rectTransform.SetParent(this.rectTransform);
         for (int x = 0; x < inventoryItem.WIDTH; x++)
         {
@@ -167,13 +215,14 @@ public class ItemGrid : MonoBehaviour
     }
 
     public bool CheckAvailableSpace(int posX, int posY, int width, int height){ //for inserting item and checking where it can go
-        for(int x = 0; x < width; x++){
-            for(int y = 0; y < height; y++){
+        for(int y = 0; y < width; y++){
+            for(int x = 0; x < height; x++){
                 if((inventoryItemSlot[posX + x, posY + y]) != null){
-                   return false;
+                    return false;
                 }
             }
         }
+        
         return true;
     }
 

@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-6275120734357042565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e8d40ac4e4d7864591ea843f61ecda3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RequiredAmount: 0
+  GoalCompleted:
+    m_PersistentCalls:
+      m_Calls: []
+  GoalDescription: 
+  type: Tutorial
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d307636516f2c91459ef324fad49cc2c, type: 3}
+  m_Name: Getting Started Pt.1
+  m_EditorClassIdentifier: 
+  Information:
+    Name: Getting Started Pt. 1
+    TaskDescription: Around the ship there are various utilities for you to utilize.
+      The stash is located in your living quarters and will hold items so that they
+      are not lost on death. There are also merchants and other NPCs (they may have
+      other tasks for you). Finally there is the pod which you will use to visit
+      Venus and carry out your tasks, Good luck Soldier.
+    NextTasks: []
+  Reward:
+    Currency: 1000
+    XP: 1
+    Items:
+    - {fileID: 11400000, guid: 5a3e7ea759b3acf43ac562a96e826c5c, type: 2}
+    - {fileID: 11400000, guid: f2092c0b7b7b1de42b8403bfadb3d3a7, type: 2}
+    - {fileID: 11400000, guid: f2092c0b7b7b1de42b8403bfadb3d3a7, type: 2}
+    - {fileID: 11400000, guid: b3cfd8ad46337964ea9e585d2a9a1de9, type: 2}
+    - {fileID: 11400000, guid: 381b3ebdee70ee649a4db5a6f21d64f7, type: 2}
+    - {fileID: 11400000, guid: 635f4fed9d7c8c04f9a33bc32677f7da, type: 2}
+  Goals:
+  - {fileID: -6275120734357042565}

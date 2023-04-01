@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-2141687592229924454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e8d40ac4e4d7864591ea843f61ecda3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RequiredAmount: 1
+  GoalCompleted:
+    m_PersistentCalls:
+      m_Calls: []
+  GoalDescription: Read the tutorial
+  type: Tutorial
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d307636516f2c91459ef324fad49cc2c, type: 3}
+  m_Name: Task Tutorial
+  m_EditorClassIdentifier: 
+  Information:
+    Name: The Task System
+    TaskDescription: This is the task system, there are three types of goals. Submit
+      tasks require you to turn in items. Slay tasks require you to kill enemies.
+      Lastly, visit tasks require you to go somewhere.
+    NextTasks:
+    - {fileID: 11400000, guid: 5d948690664621b4cb5cb3ebb411313f, type: 2}
+  Reward:
+    Currency: 10000
+    XP: 0
+    Items: []
+  Goals:
+  - {fileID: -2141687592229924454}

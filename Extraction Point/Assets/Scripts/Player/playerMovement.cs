@@ -3,89 +3,80 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class playerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
+    [SerializeField] private float moveSpeed = 1f;
+    public bool isAiming = false, isMoving = false, isSprinting = false, canMove = true;
+    private float sprintSpeed, aimSpeed;
+    private Vector2 movementInput;
     private Rigidbody2D rb;
-    [SerializeField] private float moveSpeed = 0.0f;
     private Animator animator;
     private SpriteRenderer spriteRenderer;
-    private bool canMove = true;
-    private float collisionOffset = 0.02f;
-    private Vector2 movementInput;
-    private ContactFilter2D movementFilter;
-    private List<RaycastHit2D> castCollisions = new List<RaycastHit2D>();
 
-    void Start()
+
+    private void Awake()
     {
+        sprintSpeed = moveSpeed*2f;
+        aimSpeed = moveSpeed/2f;
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    void Update()
+    {
+        if(PlayerHealth.isPlayerDead){return; }
+        CheckInputs();
+    }
+
+    private void FixedUpdate()
+    {
         
-    }
 
-    
-    void FixedUpdate(){
-    if(canMove && !InventoryController.isInvOpen){
-            if(movementInput != Vector2.zero){
-                bool success = TryMove(movementInput);
-                if(!Input.GetKey(KeyCode.LeftShift)){
-                    if(!success && movementInput.x > 0){
-                    success = TryMove(new Vector2(movementInput.x, 0));
-                    }
-                    if(!success && movementInput.y > 0){
-                    success = TryMove(new Vector2(0, movementInput.y));
-                    }
-                    animator.SetBool("isSprinting", false);
-                    animator.SetBool("isMoving", success);
-                    animator.SetFloat("inputX", movementInput.x);
-                    animator.SetFloat("inputY", movementInput.y);
-                }else{
-                    if(!success && movementInput.x > 0){
-                    success = TryMove(new Vector2(movementInput.x, 0));
-                    }
-                    if(!success && movementInput.y > 0){
-                    success = TryMove(new Vector2(0, movementInput.y));
-                    }
-
-                    animator.SetBool("isMoving", success);
-                    animator.SetBool("isSprinting", success);
-                    animator.SetFloat("inputX", movementInput.x);
-                    animator.SetFloat("inputY", movementInput.y);
-                }                 
-            }else{
-                animator.SetBool("isMoving", false);
-                animator.SetBool("isSprinting", false);
+        if (canMove && !InventoryController.isInvOpen && !PlayerHealth.isPlayerDead)
+        {
+            if (movementInput == Vector2.zero) { return; }
+            if (isSprinting)
+            { //sprinting move speed is double
+                rb.MovePosition(rb.position + movementInput * sprintSpeed * Time.fixedDeltaTime);
+            }
+            else if (isAiming)
+            { //aiming, move speed is halved
+                rb.MovePosition(rb.position + movementInput * aimSpeed * Time.fixedDeltaTime);
+            }
+            else
+            { //not sprinting, not aiming
+                rb.MovePosition(rb.position + movementInput * moveSpeed * Time.fixedDeltaTime);
             }
         }
     }
 
-    private bool TryMove(Vector2 direction){
-        if(direction != Vector2.zero){
-        int count = rb.Cast(
-                direction, // X Y values between -1 and 1 that rep direction
-                movementFilter, //determine where collision occurs
-                castCollisions, //list of collisions to store found in collisions into after cast is finished
-                moveSpeed * Time.fixedDeltaTime + collisionOffset); //ammount to cast equal to movement plus offset
+    private void CheckInputs()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            isSprinting = true;
+        }
 
-            if(count == 0){
-                rb.MovePosition(rb.position + direction * moveSpeed * Time.fixedDeltaTime);
-                return true;
-            }else{
-                return false;
-            }
-        }else{
-            //cant move with no direction to move in
-            return false;
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            isSprinting = false;
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            isAiming = true;
+        }
+
+        if (Input.GetMouseButtonUp(1))
+        {
+            isAiming = false;
         }
     }
 
-    void OnMove(InputValue movementValue) {
+    private void OnMove(InputValue movementValue){
         movementInput = movementValue.Get<Vector2>();
     }
-    public void lockMovement(){
-        canMove = false;
-    }
-    public void unlockMovement(){
-        canMove = true;
-    }
+
+
 }

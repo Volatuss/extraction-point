@@ -9,6 +9,7 @@ TagManager:
   - Container
   - Obstacle
   - Enemy
+  - FriendlyNPC
   layers:
   - Default
   - TransparentFX
@@ -48,4 +49,7 @@ TagManager:
     locked: 0
   - name: Top
     uniqueID: 428201963
+    locked: 0
+  - name: Obstacles
+    uniqueID: 3991993265
     locked: 0

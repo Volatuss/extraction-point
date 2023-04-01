@@ -5,20 +5,24 @@ using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
 {
-    int[,] map; //grid of ints, 0 = empty, 1 = wall
-    [SerializeField] int mapHeight, mapWidth, smoothingIterations = 5;
+    public int[,] map; //grid of ints, 0 = empty, 1 = wall
     [SerializeField] [Range(0, 100)] public int randomFillPercent, treeDensity, rockDensity; //density of walls to empty tiles
     [SerializeField] bool useRandomSeed = false;
+    [SerializeField] public int mapHeight, mapWidth, smoothingIterations = 7;
     [SerializeField] String seed;
-
-    private int xChunks, yChunks, totalChunks;
-    int [,] chunkMap;
-
+    [HideInInspector] public int xChunks, yChunks, totalChunks, spawnPadding, chunkSize = 16, spawnChunk;
+    private int [,] chunkMap;
+    private int[] spawnChunks;
     private System.Random pseudoRandom;
 
     void Start()
     {
+        if(useRandomSeed){
+            seed = Time.realtimeSinceStartup.ToString();
+        }
+        Debug.Log(seed);
         pseudoRandom = new System.Random(seed.GetHashCode());
+        spawnPadding = 1/4 * mapWidth;
         GenerateMap();
         
     }
@@ -31,38 +35,9 @@ public class MapGenerator : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.C)){
             Debug.Log(totalChunks);
-            Debug.Log(chunkMap);
+            Debug.Log(chunkMap[3, 3]);
+            
         }
-    }
-
-    private void SliceChunks(){ //smth broken here****
-        xChunks = mapWidth / 32;
-        yChunks = mapHeight / 32;
-        totalChunks = yChunks * xChunks;
-        chunkMap = new int[xChunks, yChunks];
-        int chunkIndex = 1;
-        for(int x = 0; x<xChunks; x++){
-            for(int y = 0; y<yChunks; y++){
-                chunkMap[x,y] = chunkIndex;
-                chunkIndex++;
-            }
-        }
-    }
-
-    private int WhatChunk(int gridX, int gridY){
-        int inChunkX = 0;
-        int inChunkY = 0;
-        for(int x = 0; x < xChunks; x++){
-            if(gridX > x*32 && gridX <= (x + 1)*32){
-                inChunkX = x;
-            }
-        }
-        for(int y = 0; y < yChunks; y++){
-            if(gridY > y*32 && gridY <= (y + 1)*32){
-                inChunkY = y;
-            }
-        }
-        return inChunkX;
     }
 
     private void GenerateMap()
@@ -70,53 +45,187 @@ public class MapGenerator : MonoBehaviour
         map = new int[mapWidth, mapHeight];
         RandomFillMap();
         
-
         for(int i = 0; i < smoothingIterations; i++){
             SmoothMap();
         }   
         for(int i = 0; i< smoothingIterations * 2; i++){
             DrawBorders();
         }
+        //Creating map data (chunks, zones, things that arent actually placing things)
+        SliceChunks();
+        CalculateBorderChunks();
+
+        //Filling in map tiles, no obstacles yet
         FillWater();
-        //PlaceObstacles();
-
-
-
+        
+        
+        //Placing Objects in the map, comes last
         PlaceBuildings();
         PlaceExtractionZones();
         PlaceSpawnPoint();
-        SliceChunks();
+        PlaceObstacles();
+       
+        //Should probably wait until all functions are completed, once that is done we will build the map
+    }
+    
+    private void SliceChunks(){ //from left -> right, bot -> top
+        xChunks = mapWidth / chunkSize;
+        yChunks = mapHeight / chunkSize;
+        totalChunks = yChunks * xChunks;
+        chunkMap = new int[xChunks, yChunks];
+        int chunkIndex = 0;
+        for(int x = 0; x<xChunks; x++){
+            for(int y = 0; y<yChunks; y++){
+                chunkMap[y ,x] = chunkIndex;
+                chunkIndex++;
+            }
+        }
+    }
+
+    private int WhatChunk(int gridX, int gridY){
+
+        int testX = gridX / chunkSize, testY = gridY / chunkSize;
+
+        int inChunkX = 0;
+        int inChunkY = 0;
+        for(int x = 0; x < xChunks; x++){
+            if(gridX > x*chunkSize && gridX <= (x + 1)*chunkSize){
+                inChunkX = x;
+            }
+        }
+        for(int y = 0; y < yChunks; y++){
+            if(gridY > y*chunkSize && gridY <= (y + 1)*chunkSize){
+                inChunkY = y;
+            }
+        }
+        return chunkMap[testX, testY];
     }
 
     private void PlaceSpawnPoint()
     {
+        
         int randX = UnityEngine.Random.Range(5, mapWidth-5);
         int randY = UnityEngine.Random.Range(5, mapHeight-5);
-        if(map[randX, randY] == 0){
+        if(map[randX, randY] == 0  && BorderChunkCheck(randX, randY) && CheckSurroundTiles(8, 8, randX, randY)){
             map[randX, randY] = 7;
-            Debug.Log(randX + ", ");
-            Debug.Log(randY);
-            Debug.Log(WhatChunk(randX, randY));
+            spawnChunk = WhatChunk(randX, randY);
+            Debug.Log("Spawn Chunk: " + spawnChunk + " At Coords: " + randX + ", " + randY);
         }else{
             PlaceSpawnPoint();
         }
 
     }
 
+    private bool BorderChunkCheck( int x, int y ) // spawn chunks are the Nth outermost layers, need width, height, and spawn chunk band width 
+    {   
+        int chunkToCheck = WhatChunk(x, y);
+        for(int i = 0; i < spawnChunks.Length ; i++){
+            if(spawnChunks[i] == chunkToCheck){
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    private void CalculateBorderChunks() //allocates a 2 chunk band around the map for valid spawn chunks and extract Chunks
+    {
+        int count = 0;
+        spawnChunks = new int[totalChunks - 2*(mapWidth/chunkSize)];
+        
+        for(int x = 0; x < mapWidth/chunkSize; x++) 
+        {
+            for(int y = 0; y < mapHeight/chunkSize; y++)
+            {
+                if(
+                    x == 0 || y == 0 || 
+                    y == mapWidth/chunkSize - 1 ||
+                    x == mapWidth/chunkSize - 1 || 
+                    x == 1 || y == 1 ||
+                    y == mapWidth/chunkSize - 2 || 
+                    x == mapWidth/chunkSize - 2 
+                    )
+                {
+                    spawnChunks[count] = chunkMap[x, y];
+                    count++;
+                }
+            }
+        }   
+        
+    }
+
     private void PlaceExtractionZones()
     {
+        for(int i = 0; i < 2; i++){
+            int randX = UnityEngine.Random.Range(5, mapWidth-5);
+            int randY = UnityEngine.Random.Range(5, mapHeight-5);
+            if(map[randX, randY] == 0  && BorderChunkCheck(randX, randY) && CheckSurroundTiles(5, 5, randX, randY)){
+                map[randX, randY] = 6;
+            }else{
+                i--;
+            }
+        }
         
+    }
+
+    private bool CheckSurroundTiles(int tileCountX, int tileCountY, int x, int y){
+        for(int i = - tileCountX; i < tileCountX; i++){
+            for(int j = - tileCountY; j < tileCountY; j++){
+                if(x - tileCountX < 0 || y - tileCountY < 0){ return false; }
+                if(x-i < 0 || y-j < 0 || x+i >= mapWidth || y+j >= mapHeight){
+                    return false;
+                }else if(map[x + i, y + j] != 0){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void ReserveArea( int x, int y, int xClear, int yClear){ //clear all tiles that arent ground or water
+        for(int i = -xClear; i <= xClear; i ++){
+            for(int j = -yClear; j <= yClear; j ++){ //sds
+                map[i+x, j+y] = 10;
+            }
+        }
+        map[x, y] = 8;
     }
 
     private void PlaceBuildings()
     {
-        
+        int smallPlaced = 0, medPlaced = 0, largePlaced = 0; //number of placed 
+        while(largePlaced < 1 ){
+            int randX = UnityEngine.Random.Range(5, mapWidth-5);
+            int randY = UnityEngine.Random.Range(5, mapHeight-5);
+            if(map[randX, randY] == 0  && !BorderChunkCheck(randX, randY) && CheckSurroundTiles(20, 15, randX, randY)){
+                map[randX, randY] = 8;
+                ReserveArea(randX, randY, 20, 15);
+                largePlaced++;
+            }
+        }
+        while(medPlaced < 2 ){
+            int randX = UnityEngine.Random.Range(5, mapWidth-5);
+            int randY = UnityEngine.Random.Range(5, mapHeight-5);
+            if(map[randX, randY] == 0  && CheckSurroundTiles(15, 15, randX, randY)){
+                map[randX, randY] = 8;
+                ReserveArea(randX, randY, 15, 15);
+                medPlaced++;
+            }
+        }
+        while(smallPlaced < 3 ){
+            int randX = UnityEngine.Random.Range(5, mapWidth-5);
+            int randY = UnityEngine.Random.Range(5, mapHeight-5);
+            if(map[randX, randY] == 0  && CheckSurroundTiles(8, 8, randX, randY)){
+                map[randX, randY] = 8;
+                ReserveArea(randX, randY, 8, 8);
+                smallPlaced++;
+            }
+        }
+
     }
 
     private void RandomFillMap(){
-        if(useRandomSeed){
-            seed = Time.time.ToString();
-        }
+        
 
         
 
@@ -161,17 +270,21 @@ public class MapGenerator : MonoBehaviour
         return wallCount;
     }
 
-    
-
     private void PlaceObstacles(){
         for(int x = 0; x < mapWidth ; x++){
             for(int y = 0; y < mapHeight ; y++){
                 if(map[x, y] == 0){
-                    map[x,y] = (pseudoRandom.Next(0, 100) < treeDensity) ? 2: map[x, y];
-                    map[x,y] = (pseudoRandom.Next(0, 100) < rockDensity) ? 3: map[x, y];
+                    if(CheckSurroundTiles(1,1,x,y)){
+                        map[x,y] = (pseudoRandom.Next(0, 100) < treeDensity) ? 2: map[x, y];
+                    }
+                    if(CheckSurroundTiles(2,2,x,y)){
+                        map[x,y] = (pseudoRandom.Next(0, 100) < rockDensity) ? 3: map[x, y];
+                    }
                 }
             }
         }
+
+        MapBuilder.beginBuilding = true;
     }
 
     private void FillWater(){
@@ -201,6 +314,7 @@ public class MapGenerator : MonoBehaviour
         }
         
     }
+
     private bool FillBorders(int gridX, int gridY){
         bool isBorder = false;
         for(int neighborX = gridX - 1; neighborX <= gridX + 1; neighborX ++){ //loops through 3x3 grid centered on (gridX, gridY)
@@ -220,7 +334,7 @@ public class MapGenerator : MonoBehaviour
         return isBorder;
     }
 
-    void OnDrawGizmos(){
+    /*void OnDrawGizmos(){
         if(map == null){ return; }
         for(int x = 0; x < mapWidth ; x++){
             for(int y = 0; y < mapHeight ; y++){
@@ -249,14 +363,20 @@ public class MapGenerator : MonoBehaviour
                     case 7: //Spawn point
                         Gizmos.color = Color.cyan;
                         break;
+                    case 8: //building center
+                        Gizmos.color = Color.yellow;
+                        break;
+                    case 10:
+                        Gizmos.color = Color.red;
+                        break;
                     default:
                         break;
 
                 }
-                Vector3 pos = new Vector3(-mapWidth/2 + x + .5f, -mapHeight/2 + y + .5f, 0);
+                Vector3 pos = new Vector3(-mapWidth + x - 10.5f, y, 0);
                 Gizmos.DrawCube(pos, Vector3.one);
             }
         }
         
-    }
+    }*/
 }

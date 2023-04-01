@@ -12,9 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11e0215b1a47e704aaa7ebd879a2403b, type: 3}
   m_Name: AK101
   m_EditorClassIdentifier: 
+  itemID: 2
   width: 3
   height: 2
   itemWeight: 5
+  itemName: AK-101
+  isWeapon: 1
   isBackpack: 0
   isArmor: 0
+  weapon: {fileID: 11400000, guid: 3dd4e703ed387754c9a986a3ad0f73ce, type: 2}
   itemIcon: {fileID: 21300000, guid: b16a4d0c87c0f97489bd1fa7710060ba, type: 3}

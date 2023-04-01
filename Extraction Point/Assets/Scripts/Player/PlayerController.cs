@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] GameObject lootToolTip;
-    [SerializeField] GameObject InventoryInterface;
-    [SerializeField] private FieldOfView fieldOfView;
+    [SerializeField] GameObject lootToolTip, npcToolTip, InventoryInterface, questInterface;
     
-    public static bool isObjectLootable = false;
+    [SerializeField] private FieldOfView fieldOfView;
+
+    private List<GameObject> openToolTips = new List<GameObject>();
+    
+    public static bool isObjectLootable = false, isNPCLabel = false, isQuestOpen = false;
+
+    private int currentInteractionPrompts = 0;
     
 
     void Update()
@@ -24,6 +28,8 @@ public class PlayerController : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.F) && isObjectLootable){
             InventoryInterface.SetActive(true);
             InventoryController.isInvOpen = true;
+        }else if(Input.GetKeyDown(KeyCode.F) && isNPCLabel){
+            
         }    
 
         /*
@@ -41,12 +47,22 @@ public class PlayerController : MonoBehaviour
             
             }
         }*/
+        if(Input.GetKeyDown(KeyCode.C)){
+            questInterface.SetActive(!isQuestOpen);
+            Cursor.visible = !isQuestOpen;
+            isQuestOpen = !isQuestOpen;
+        }
+
+        
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
         if(other.CompareTag("Container")){
             lootToolTip.SetActive(true);
             isObjectLootable = true;
+        }else if(other.CompareTag("FriendlyNPC")){
+            npcToolTip.SetActive(true);
+            isNPCLabel = true;
         }
     }
 
@@ -54,6 +70,18 @@ public class PlayerController : MonoBehaviour
         if(other.CompareTag("Container")){
             lootToolTip.SetActive(false);
             isObjectLootable = false;
+        }else if(other.CompareTag("FriendlyNPC")){
+            npcToolTip.SetActive(false);
+            isNPCLabel = false;
         }
+        
+    }
+
+    private void CreateNewLootTip(){
+        
+    }
+
+    private void CreateNewNPCTip(){
+
     }
 }

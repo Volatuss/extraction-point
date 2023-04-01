@@ -17,6 +17,7 @@ public class BloodParticleSystemHandler : MonoBehaviour
     }
 
     private void LateUpdate() {
+        if(splatterList == null){ return; }
         for(int i = 0; i<splatterList.Count; i++){
             Splat singleSplat = splatterList[i];
             singleSplat.Update();
@@ -49,7 +50,7 @@ public class BloodParticleSystemHandler : MonoBehaviour
             
             quadSize = new Vector3(.2f, .2f);
             rotation = Random.Range(0, 360f);
-            moveSpeed = Random.Range(7f, 21f);
+            moveSpeed = Random.Range(24f, 48f);
             uvIndex = Random.Range(0,7);
 
             quadIndex = meshParticleSystem.AddQuad(position, rotation, quadSize, uvIndex);
@@ -63,7 +64,7 @@ public class BloodParticleSystemHandler : MonoBehaviour
             position += direction * moveSpeed * Time.deltaTime;
             rotation += 360f * (moveSpeed / 10f) * Time.deltaTime;
             meshParticleSystem.UpdateQuad(quadIndex, position, rotation, quadSize, uvIndex);
-            float slowDownFactor = 7f;
+            float slowDownFactor = 14f;
             moveSpeed -= moveSpeed * slowDownFactor * Time.deltaTime;           
         }
 

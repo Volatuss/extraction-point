@@ -16,6 +16,7 @@ public class ShellParticleSystemHandler : MonoBehaviour
     }
 
     private void LateUpdate() {
+        if(singleList == null){return;}
         for(int i = 0; i<singleList.Count; i++){
             Single single = singleList[i];
             single.Update();
