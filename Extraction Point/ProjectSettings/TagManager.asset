@@ -10,6 +10,8 @@ TagManager:
   - Obstacle
   - Enemy
   - FriendlyNPC
+  - UserInterface
+  - Utility
   layers:
   - Default
   - TransparentFX

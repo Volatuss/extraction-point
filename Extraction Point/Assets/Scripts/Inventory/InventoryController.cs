@@ -18,11 +18,14 @@ public class InventoryController : MonoBehaviour
         }
     } 
     [SerializeField] ItemGrid InventoryGrid, LootGrid, PrimaryGrid, SecondaryGrid;  
-    [SerializeField] GameObject inventoryInterface, itemPrefab, itemRightClick, equipableRightClick, EquipBut, unEquipBut;
+    [SerializeField] public GameObject inventoryInterface, itemPrefab, groundContainerPrefab, itemRightClick, equipableRightClick, EquipBut, unEquipBut, player;
     [SerializeField] List<ItemData> items;
     [SerializeField] Transform canvasTransform;
-    [SerializeField] TextMeshProUGUI totalWeightText, lootLabel;
+    [SerializeField] public TextMeshProUGUI totalWeightText, lootLabel;
+    [SerializeField] GameHandler gameHandler;
     static List<ItemData> itemDataList;
+    public int OpenContainerID;
+    public LootableController currentController = null;
 
     InventoryItem selectedItem, overlapItem, itemToHighlight, itemToEquip, itemToUnequip;
     RectTransform rectTransform, primRect, secRect;
@@ -35,9 +38,10 @@ public class InventoryController : MonoBehaviour
     InventoryHighlight inventoryHighlight;
     Vector2 oldPositon;
 
+
     private void Awake() {
         inventoryHighlight = GetComponent<InventoryHighlight>();
-        primRect = PrimaryGrid.GetComponent<RectTransform>();
+        primRect = PrimaryGrid.GetComponent<RectTransform>(); //giving error here
         secRect = SecondaryGrid.GetComponent<RectTransform>();
         itemDataList = items;
         
@@ -45,17 +49,14 @@ public class InventoryController : MonoBehaviour
 
     private void Update()
     {
+        
         if(Input.GetKeyDown(KeyCode.I)){
-            if(isInvOpen){
-                
-            }else{
-                
-            }
-            Cursor.visible = !isInvOpen;
-            inventoryInterface.SetActive(!isInvOpen);
-            isInvOpen = !isInvOpen;
+            //Cursor.visible = !isInvOpen;
+            //inventoryInterface.SetActive(!isInvOpen);
+            //isInvOpen = !isInvOpen;
+            selectedItemGrid = null;
         }   
-        if(isInvOpen == false){return; }
+        if(GameHandler.CurrentActiveUI != inventoryInterface){return; }
         ItemIconDrag();
         if(Input.GetKeyDown(KeyCode.Q)){
             if(selectedItem == null){
@@ -63,12 +64,12 @@ public class InventoryController : MonoBehaviour
             }
         }
 
-        if(Input.GetKeyDown(KeyCode.W) && isInvOpen){
+        if(Input.GetKeyDown(KeyCode.W) && GameHandler.CurrentActiveUI == inventoryInterface){
             if(selectedItemGrid == null){ return; }
             InsertRandomItem();
         }
         
-        if(Input.GetKeyDown(KeyCode.J) && isInvOpen){
+        if(Input.GetKeyDown(KeyCode.J) && GameHandler.CurrentActiveUI == inventoryInterface){
             Debug.Log("Display Contents");
             InventoryGrid.DisplayContents();
             foreach(var data in InventoryItems){
@@ -113,33 +114,10 @@ public class InventoryController : MonoBehaviour
         return InventoryGrid;
     }
 
-    public static Dictionary<float[], int> GetSerializableItemList(){
-        Dictionary<float[], int> toReturn = new Dictionary<float[], int>();
-        
-        foreach(var item in InventoryItems){
-            float[] xyPair = new float[2];
-            xyPair[0] = item.Key.x;
-            xyPair[1] = item.Key.y;
-            
-            toReturn.Add(xyPair, item.Value.itemID);
-        }
-        
-        return toReturn;
-    }
-
-    public static void LoadToItemList(Dictionary<float[], int> toLoad){
-        InventoryItems.Clear();
-        
-        foreach(var item in toLoad){
-            InventoryItems.Add(new Vector2(item.Key[0], item.Key[1]), itemDataList[item.Value - 1]);
-        }
-    } 
-
-    
 
     public void OpenContextMenu(){
         
-        if(!isInvOpen){ return; }
+        if(!GameHandler.CurrentActiveUI == inventoryInterface){ return; }
         Vector2Int positionOnGrid = GetTileGridPosition();
         InventoryItem itemRightClicked = selectedItemGrid.GetItem(positionOnGrid.x, positionOnGrid.y);
         if(itemRightClicked == null){return; } //exit gate
@@ -240,11 +218,6 @@ public class InventoryController : MonoBehaviour
         CloseOtherContexts();
     }
 
-    public void OpenInventoryInterface(){
-        inventoryInterface.SetActive(!isInvOpen);
-        isInvOpen = !isInvOpen;
-    }
-
     private void QuickTransferItem() //working for now, if controlClick on item
     {
         if(selectedItemGrid.CompareTag("LootInv")){ //from loot to inventory
@@ -312,7 +285,7 @@ public class InventoryController : MonoBehaviour
 
     private void HandleHighlight()
     {   
-        if(!isInvOpen){return;}
+        if(!GameHandler.CurrentActiveUI == inventoryInterface){return;}
         Vector2Int positionOnGrid = GetTileGridPosition();
         if(oldPositon == positionOnGrid){return;}
         oldPositon = positionOnGrid;
@@ -341,8 +314,9 @@ public class InventoryController : MonoBehaviour
         }
     }
 
-    public void LoadSavedLoot(ItemGrid itemGrid, int itemCount, float[,] itemsToLoad){ //this currently functions as is
-        for(int i = 0; i < itemCount; i++)
+    public void LoadSavedLoot(ItemGrid itemGrid, int itemCount, Dictionary<Vector2, int> toLoad)
+    { //this currently functions as is
+        foreach(var itemToLoad in toLoad)
         {
             InventoryItem inventoryItem = Instantiate(itemPrefab).GetComponent<InventoryItem>();
             selectedItem = inventoryItem;
@@ -351,12 +325,12 @@ public class InventoryController : MonoBehaviour
             rectTransform.SetParent(canvasTransform);
             rectTransform.SetAsLastSibling();
 
-            inventoryItem.Set(items[((int)itemsToLoad[i,2])-1]);
-            inventoryItem.name = inventoryItem.Get(items[((int)itemsToLoad[i,2])-1]).ToString() + " : " + items[((int)itemsToLoad[i,2])-1].itemName;
+            inventoryItem.Set(items[itemToLoad.Value - 1]);
+            inventoryItem.name = inventoryItem.Get(items[itemToLoad.Value - 1]).ToString() + " : " + items[itemToLoad.Value - 1].itemName;
 
-            itemGrid.PlaceItem(selectedItem, ((int)itemsToLoad[i, 0]), ((int)itemsToLoad[i, 1]));           
+            itemGrid.PlaceItem(selectedItem, ((int)itemToLoad.Key.x), ((int)itemToLoad.Key.y));           
         }
-
+        GameHandler.loadedData = true;
         selectedItem = null;
     }
 
@@ -398,6 +372,7 @@ public class InventoryController : MonoBehaviour
 
     private void LeftMouseButtonPress()
     {
+        if (selectedItemGrid == null) { return; }
         Vector2Int tileGridPosition = GetTileGridPosition();
 
         if (selectedItem == null)
@@ -454,8 +429,80 @@ public class InventoryController : MonoBehaviour
         }
     }
 
-    public void LoadLoot() //when a container is opened need to process the list of items from the container object and place the items in the container, we also need to clear this once we close the container
+    public void InteractWithContainer(GameObject container) //when a container is opened need to process the list of items from the container object and place the items in the container, we also need to clear this once we close the container
     {
+        Debug.Log(container);
+    }
 
+    public void OnCloseInventory() //upon being disabled, the objects in the ground grid should create a bag on the ground which contains the contents of the loot grid !!!!ONLY IF NO LOOTABLE CONTAINER IS OPEN!!!!
+    {
+        Debug.Log("Closing container " + OpenContainerID + " with " + LootGrid.itemsInGrid.Count + " items");
+        
+        if(LootGrid.itemsInGrid.Count > 0 && OpenContainerID == 0){ //if there is an item in the loot grid then make an object on the ground
+            StartCoroutine(CreateGroundBag());
+        }else if(currentController != null && currentController.itemsInContainer.Count > 0 && OpenContainerID != 0){
+            StartCoroutine(NormalClose());
+        }
+        
+        lootLabel.text = "Ground";
+    }
+
+    IEnumerator NormalClose(){ //need to compare original list to current list
+        
+        Dictionary<Vector2, ItemData> itemList = new Dictionary<Vector2, ItemData>();
+        foreach(var item in LootGrid.itemsInGrid){
+            Debug.Log(item.Value);
+            itemList.Add(item.Key, item.Value);
+        }
+        
+        
+        currentController.itemsInContainer = itemList;
+        
+        yield return null;
+        LootGrid.ClearLootGrid();
+        currentController = null;
+        
+        yield return null;
+    }
+
+    IEnumerator CreateGroundBag(){
+        Dictionary<Vector2, ItemData> itemList = new Dictionary<Vector2, ItemData>();
+        GameObject groundBag = Instantiate(groundContainerPrefab, new Vector3(player.transform.position.x, player.transform.position.y, 0.0f), Quaternion.identity);
+        LootableController bagCont = groundBag.GetComponent<LootableController>();
+        bagCont.containerName = "Bag";
+        bagCont.inventoryController = this;
+        foreach(var item in LootGrid.itemsInGrid){
+            itemList.Add(item.Key, item.Value);
+        }
+        groundBag.GetComponent<LootableController>().itemsInContainer = itemList;
+        yield return null;
+        LootGrid.ClearLootGrid();
+        yield return null;
+    }
+
+    IEnumerator LoadTest(Dictionary<Vector2, ItemData> itemsToLoad, string name){
+        gameHandler.TryOpenInterface(inventoryInterface);
+        yield return null;
+        lootLabel.SetText(name);
+        foreach(var item in itemsToLoad){
+            InventoryItem inventoryItem = Instantiate(itemPrefab).GetComponent<InventoryItem>();
+            selectedItem = inventoryItem;
+
+            rectTransform = inventoryItem.GetComponent<RectTransform>();
+            rectTransform.SetParent(canvasTransform);
+            rectTransform.SetAsLastSibling();
+
+            inventoryItem.Set(item.Value);
+            inventoryItem.name = inventoryItem.Get(item.Value).ToString() + " : " + item.Value.itemName;
+
+            LootGrid.PlaceItem(selectedItem, ((int)item.Key.x), ((int)item.Key.y));
+        }
+        selectedItem = null;
+        yield return null;
+    }
+
+    public void LoadLootFromObject(Dictionary<Vector2, ItemData> itemsToLoad, string name){
+        StartCoroutine(LoadTest(itemsToLoad, name));
+        
     }
 }

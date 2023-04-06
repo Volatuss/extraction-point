@@ -27,6 +27,7 @@ public class MapBuilder : MonoBehaviour
             Debug.Log(beginBuilding);
             yield return null;
         }
+        MapGenerator.CurrentStage = "BuildingMap";
         Debug.Log(beginBuilding);
         map = mapGen.map;
         mapWidth = mapGen.mapWidth;
@@ -37,6 +38,7 @@ public class MapBuilder : MonoBehaviour
 
     private void PlaceGroundTiles()
     {
+        MapGenerator.CurrentStage = "Placing Ground Tiles";
         for(int x = 0; x < mapWidth; x++){
             for(int y = 0; y < mapHeight; y++){
                 if(map[x, y] != 5 && map[x, y] != 4){
@@ -49,6 +51,7 @@ public class MapBuilder : MonoBehaviour
 
     private void PlaceOverlayTiles()
     {
+        MapGenerator.CurrentStage = "Placing Overlay Tiles";
         GameObject treeToPlace;
         for(int x = 0; x < mapWidth; x++){
             for(int y = 0; y < mapHeight; y++){
@@ -63,6 +66,7 @@ public class MapBuilder : MonoBehaviour
 
     private void PlaceObstacleTiles()
     {
+        MapGenerator.CurrentStage = "Placing Obstacle Tiles";
         for(int x = 0; x < mapWidth; x++){
             for(int y = 0; y < mapHeight; y++){
                 if(map[x, y] == 4 || map[x, y] == 5 ){
@@ -72,6 +76,11 @@ public class MapBuilder : MonoBehaviour
         }
         
         finishedBuilding = true;
+        FinalizeMap();
+    }
+
+    private void FinalizeMap(){
+        MapGenerator.playerTransform.position = MapGenerator.SpawnPosition;
     }
 
 }

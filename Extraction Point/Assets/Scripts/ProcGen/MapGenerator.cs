@@ -5,18 +5,22 @@ using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
 {
+    public static string CurrentStage = "";
+    public static Vector2 SpawnPosition;
     public int[,] map; //grid of ints, 0 = empty, 1 = wall
     [SerializeField] [Range(0, 100)] public int randomFillPercent, treeDensity, rockDensity; //density of walls to empty tiles
     [SerializeField] bool useRandomSeed = false;
     [SerializeField] public int mapHeight, mapWidth, smoothingIterations = 7;
     [SerializeField] String seed;
     [HideInInspector] public int xChunks, yChunks, totalChunks, spawnPadding, chunkSize = 16, spawnChunk;
+    public static Transform playerTransform;
     private int [,] chunkMap;
     private int[] spawnChunks;
     private System.Random pseudoRandom;
 
     void Start()
     {
+        CurrentStage = "Seeding";
         if(useRandomSeed){
             seed = Time.realtimeSinceStartup.ToString();
         }
@@ -42,6 +46,7 @@ public class MapGenerator : MonoBehaviour
 
     private void GenerateMap()
     {
+        CurrentStage = "GeneratingMap";
         map = new int[mapWidth, mapHeight];
         RandomFillMap();
         
@@ -103,13 +108,14 @@ public class MapGenerator : MonoBehaviour
 
     private void PlaceSpawnPoint()
     {
-        
+        CurrentStage = "PlacingSpawnPoint";
         int randX = UnityEngine.Random.Range(5, mapWidth-5);
         int randY = UnityEngine.Random.Range(5, mapHeight-5);
         if(map[randX, randY] == 0  && BorderChunkCheck(randX, randY) && CheckSurroundTiles(8, 8, randX, randY)){
             map[randX, randY] = 7;
             spawnChunk = WhatChunk(randX, randY);
             Debug.Log("Spawn Chunk: " + spawnChunk + " At Coords: " + randX + ", " + randY);
+            SpawnPosition = new Vector2(randX, randY);
         }else{
             PlaceSpawnPoint();
         }
@@ -156,6 +162,7 @@ public class MapGenerator : MonoBehaviour
 
     private void PlaceExtractionZones()
     {
+        CurrentStage = "PlacingExtracts";
         for(int i = 0; i < 2; i++){
             int randX = UnityEngine.Random.Range(5, mapWidth-5);
             int randY = UnityEngine.Random.Range(5, mapHeight-5);
@@ -193,6 +200,7 @@ public class MapGenerator : MonoBehaviour
 
     private void PlaceBuildings()
     {
+        CurrentStage = "PlacingBuildings";
         int smallPlaced = 0, medPlaced = 0, largePlaced = 0; //number of placed 
         while(largePlaced < 1 ){
             int randX = UnityEngine.Random.Range(5, mapWidth-5);
@@ -225,10 +233,6 @@ public class MapGenerator : MonoBehaviour
     }
 
     private void RandomFillMap(){
-        
-
-        
-
         for(int x = 0; x < mapWidth ; x++){
             for(int y = 0; y < mapHeight ; y++){
                 if(x == 0 || x == mapWidth - 1 || y == 0 || y == mapHeight - 1){ //generating border tiles

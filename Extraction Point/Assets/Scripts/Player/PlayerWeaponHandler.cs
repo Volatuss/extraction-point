@@ -34,7 +34,7 @@ public class PlayerWeaponHandler : MonoBehaviour
     }
 
     private void Update() {
-        if(PlayerHealth.isPlayerDead){return; }
+        if(PlayerHealth.isPlayerDead || GameHandler.isUIOpen){return; }
 
         if(Input.GetKeyDown(KeyCode.Alpha1) && EquipmentData.primaryData != null){
             
@@ -158,7 +158,7 @@ public class PlayerWeaponHandler : MonoBehaviour
         if(remainingAmmo != 0){
             ammoCounter.SetText(remainingAmmo + "/" + magSize);
         }else{
-            ammoCounter.SetText("--/" + magSize);
+            ammoCounter.SetText("--/" + magSize); //giving error here
         }
         
     }

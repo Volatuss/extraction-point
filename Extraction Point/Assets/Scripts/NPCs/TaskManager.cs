@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -10,10 +11,16 @@ public class TaskManager : MonoBehaviour
     [SerializeField] private Transform tasksContent;
     [SerializeField] private TaskOBJ firstTask;
     private TaskOBJ listedTask;
+    private static TaskOBJ starterTask;
     public static List<TaskOBJ> CurrentTasks = new List<TaskOBJ>(), CompletedTasks = new List<TaskOBJ>();
 
+    private void Awake() {
+        starterTask = firstTask;
+    }
+
     private void OnEnable() {
-        if(!CurrentTasks.Contains(firstTask) && !CompletedTasks.Contains(firstTask)){CurrentTasks.Add(firstTask); }
+        //if(!CurrentTasks.Contains(firstTask) && !CompletedTasks.Contains(firstTask)){CurrentTasks.Add(firstTask); }
+        
         
         listedTask = null;
         foreach(var task in CurrentTasks){
@@ -66,6 +73,15 @@ public class TaskManager : MonoBehaviour
         tasksContent.GetChild(CurrentTasks.IndexOf(task)).Find("Checkmark").gameObject.SetActive(true);
     }
 
+    internal void LoadTaskLists(List<TaskOBJ> cur_tasks, List<TaskOBJ> comp_tasks)
+    {
+        CurrentTasks = cur_tasks;
+        CompletedTasks = comp_tasks;
+    }
 
-    
+    public static void ResetTasks(){
+        CurrentTasks.Clear();
+        CompletedTasks.Clear();
+        CurrentTasks.Add(starterTask);
+    }
 }

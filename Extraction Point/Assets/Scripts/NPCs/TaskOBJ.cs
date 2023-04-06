@@ -12,6 +12,7 @@ public class TaskOBJ : ScriptableObject {
     public struct Info
     {
         public string Name;
+        public int TaskID;
         public string TaskDescription;
         public List<TaskOBJ> NextTasks;
         

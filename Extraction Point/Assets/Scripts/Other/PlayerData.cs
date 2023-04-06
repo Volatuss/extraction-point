@@ -1,36 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json.Converters;
 
 public class PlayerData
 {
-    public float[,] ItemsInInventory; //2d array, stores x, y, item id
-    public float[] position = new float[3];    
-    public int totalItemCount, level, money; //not implemented yet
+    public int TotalItemsInInventory;
+    public ConvertToSerializable.InventoryContents ItemsInInventory;
+    public ConvertToSerializable.TaskList CurrentTasks, CompletedTasks;
+    public float[] CurrentPlayerPosition = new float[3];  
+    public int  level, money; //not implemented yet
     public float health;
-    public List<string> currentTasks = new List<string>(), completedTasks = new List<string>();
+    
 
-    public PlayerData (){
-        int i = 0;
-        totalItemCount = InventoryController.InventoryItems.Count;
-        ItemsInInventory = new float[totalItemCount, 3];
+    
+
+    public PlayerData ()
+    {
+        
+        //GeneralInfo
         health = PlayerHealth.currentHealth;
+        
+        
+        //inventory items
+        TotalItemsInInventory = InventoryController.InventoryItems.Count;
+        ItemsInInventory  = ConvertToSerializable.i_ConvertTo(InventoryController.InventoryItems);
 
-        foreach(var item in InventoryController.InventoryItems){
-            ItemsInInventory[i, 0] = item.Key.x;
-            ItemsInInventory[i, 1] = item.Key.y;
-            ItemsInInventory[i, 2] = item.Value.itemID;
-            i++;
-        }
-        
-        
-        foreach(TaskOBJ task in TaskManager.CurrentTasks){
-            currentTasks.Add(task.name);
-        }
+        //need to do with equipment slots
 
-        foreach(TaskOBJ task in TaskManager.CompletedTasks){
-            completedTasks.Add(task.name);
-        }
+        //need to do similar thing with stash
         
+        //completed tasks and current tasks
+
+        CurrentTasks = ConvertToSerializable.t_ConvertTo(TaskManager.CurrentTasks);
+        CompletedTasks = ConvertToSerializable.t_ConvertTo(TaskManager.CompletedTasks);
+
     }
+    
 }

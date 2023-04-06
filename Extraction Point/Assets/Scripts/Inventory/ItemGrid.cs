@@ -9,6 +9,8 @@ public class ItemGrid : MonoBehaviour
     public const float tileSizeHeight = 48;
     [SerializeField] public int gridSizeWidth = 10, gridSizeHeight = 14;
     [SerializeField] GameObject inventoryItemPrefab;
+    public List<InventoryItem> inventoryItemsInGrid = new List<InventoryItem>();
+    public Dictionary<Vector2, ItemData> itemsInGrid = new Dictionary<Vector2, ItemData>();
     RectTransform rectTransform;
     Vector2 positionOnTheGrid = new Vector2();
     Vector2Int tileGridPosition = new Vector2Int();
@@ -68,7 +70,7 @@ public class ItemGrid : MonoBehaviour
         if (toReturn == null) { return null; }
 
         CleanGridReference(toReturn);
-        
+        itemCount--;
 
         return toReturn;
     }
@@ -78,6 +80,8 @@ public class ItemGrid : MonoBehaviour
         if(transform.name == "InvGrid"){
             InventoryController.InventoryItems.Remove(new Vector2(item.onGridPositionX, item.onGridPositionY));
         }
+        itemsInGrid.Remove(new Vector2(item.onGridPositionX, item.onGridPositionY));
+        inventoryItemsInGrid.Remove(item);
         for (int ix = 0; ix < item.WIDTH; ix++)
         { //removing whole item
             for (int iy = 0; iy < item.HEIGHT; iy++)
@@ -131,10 +135,11 @@ public class ItemGrid : MonoBehaviour
     internal void ClearWholeGrid()
     {
         for(int x = 0; x < gridSizeHeight-1; x++){
-            for(int y = 0; y< gridSizeWidth-1; y++){
-                inventoryItemSlot[x,y] = null;
+            for(int y = 0; y < gridSizeWidth-1; y++){
+                inventoryItemSlot[y, x] = null;
             }
         }
+        itemCount = 0;
     }
 
     public bool PlaceItem(InventoryItem inventoryItem, int posX, int posY, ref InventoryItem overlapItem)
@@ -169,6 +174,8 @@ public class ItemGrid : MonoBehaviour
         if(transform.name == "InvGrid"){
             InventoryController.InventoryItems.Add(new Vector2(posX, posY), inventoryItem.itemData);
         }
+        itemsInGrid.Add(new Vector2(posX, posY), inventoryItem.itemData);
+        inventoryItemsInGrid.Add(inventoryItem);
         //InventoryItem itemToWeigh = inventoryItem;
 
         rectTransform.SetParent(this.rectTransform);
@@ -179,7 +186,7 @@ public class ItemGrid : MonoBehaviour
                 inventoryItemSlot[posX + x, posY + y] = inventoryItem;
             }
         }
-
+        itemCount++;
         inventoryItem.onGridPositionX = posX;
         inventoryItem.onGridPositionY = posY;
         Vector2 position = CalculatePositionOnGrid(inventoryItem, posX, posY);
@@ -252,6 +259,18 @@ public class ItemGrid : MonoBehaviour
         }
         return false;
     }
+
+    public void ClearLootGrid(){
+        ClearWholeGrid();
+        
+        foreach(InventoryItem item in inventoryItemsInGrid){
+            Destroy(item.gameObject);
+        }
+        
+        inventoryItemsInGrid.Clear();
+        itemsInGrid.Clear();
+    }
     
+
 }
 

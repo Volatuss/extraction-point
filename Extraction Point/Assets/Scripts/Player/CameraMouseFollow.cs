@@ -22,7 +22,8 @@ public class CameraMouseFollow : MonoBehaviour
     void Update() 
     {
         if(PlayerHealth.isPlayerDead){return; }
-        if(InventoryController.isInvOpen || PlayerController.isQuestOpen){ //if inv is not open, shouldnt be able to move the camera
+
+        if(GameHandler.isUIOpen){ //if inv is not open, shouldnt be able to move the camera
             this.transform.position = player.transform.position;
         }else{
             if(Input.GetMouseButtonDown(1)){

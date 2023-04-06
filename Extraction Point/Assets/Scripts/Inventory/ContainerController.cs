@@ -4,12 +4,20 @@ using UnityEngine;
 
 public class ContainerController : MonoBehaviour
 {
-    ItemData[] lootGenerated;
-    /* [SerializeField] List<ItemData> items; //loot pool for the given container
-    public Dictionary<int, Tuple<ItemData, Vector2>> storedItems = new Dictionary<int, Tuple<ItemData, Vector2>>(); //dicitonary to store items, key = num for the item, ItemData is stored to know dimensions, Vector2 = the top left cell of the item
-    */
+    [SerializeField] List<ItemData> LootPool; //loot pool for the given container
+    [SerializeField] public string ContainerType; //medical, weapon, ammo, etc
+    public List<ItemData> GeneratedLoot = new List<ItemData>();
+    private int numberOfItems;
 
     private void Awake() {
-       
+       GenerateLoot();
+    }
+
+    private void GenerateLoot(){
+        numberOfItems = Random.Range(1, 12);
+
+        for(int i = 0; i < numberOfItems; i++){
+            GeneratedLoot.Add(LootPool[Random.Range(0, LootPool.Count)]);
+        }
     }
 }

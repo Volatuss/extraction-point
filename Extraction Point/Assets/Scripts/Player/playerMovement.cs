@@ -33,7 +33,7 @@ public class PlayerMovement : MonoBehaviour
     {
         
 
-        if (canMove && !InventoryController.isInvOpen && !PlayerHealth.isPlayerDead)
+        if (canMove && !GameHandler.isUIOpen && !PlayerHealth.isPlayerDead)
         {
             if (movementInput == Vector2.zero) { return; }
             if (isSprinting)

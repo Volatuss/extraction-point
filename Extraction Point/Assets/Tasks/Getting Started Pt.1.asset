@@ -32,6 +32,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Information:
     Name: Getting Started Pt. 1
+    TaskID: 1
     TaskDescription: Around the ship there are various utilities for you to utilize.
       The stash is located in your living quarters and will hold items so that they
       are not lost on death. There are also merchants and other NPCs (they may have
