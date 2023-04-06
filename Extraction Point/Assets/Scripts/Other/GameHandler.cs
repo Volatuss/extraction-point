@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -20,7 +21,12 @@ public class GameHandler : MonoBehaviour
 
     
     private void Awake() { //loads the data from file when opening the save file
-        DeserializeJson();
+        if(File.Exists(Application.persistentDataPath + "/player-data-save.json")){
+            DeserializeJson();
+        }else{
+            //no file to load
+        }
+        
     }
 
     //should probably do my inputs here for almost everything, infact, should use new Input system
