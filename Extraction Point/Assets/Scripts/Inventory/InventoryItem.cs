@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class InventoryItem : MonoBehaviour
 {
     public ItemData itemData;
-    public int onGridPositionX, onGridPositionY;
+    public int onGridPositionX, onGridPositionY, currentStackSize = 1;
+    public TextMeshProUGUI stackCounter;
     public bool rotated = false;
     public bool weight;
 
@@ -35,10 +37,23 @@ public class InventoryItem : MonoBehaviour
         GetComponent<Image>().sprite = itemData.itemIcon;
 
         Vector2 size = new Vector2();
-        size.x = itemData.width *  ItemGrid.tileSizeWidth;
-        size.y = itemData.height *  ItemGrid.tileSizeHeight;
+        size.x = (itemData.width * (Screen.width / 1920f) )*  ItemGrid.tileSizeWidth;
+        size.y = (itemData.height * (Screen.height / 1080f) )*  ItemGrid.tileSizeHeight;
         GetComponent<RectTransform>().sizeDelta = size;
+
+        if(currentStackSize > 1){
+
+        }
         
+    }
+
+    internal void UpdateCounter(){
+        if(currentStackSize.ToString() != stackCounter.text && currentStackSize > 1){
+            stackCounter.text = currentStackSize.ToString();
+        }else if(currentStackSize == 1){
+            stackCounter.text = "";
+        }
+        itemData.currentStackSize = currentStackSize;
     }
 
     internal int Get(ItemData itemData){

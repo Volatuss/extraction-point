@@ -15,6 +15,6 @@ public class LoadingScreen : MonoBehaviour
     
     public IEnumerator FinishedLoading(){
         yield return new WaitForSeconds(4f);
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 }

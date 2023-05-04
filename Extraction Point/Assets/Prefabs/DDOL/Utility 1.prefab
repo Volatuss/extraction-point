@@ -391,7 +391,7 @@ MonoBehaviour:
   SecondaryGrid: {fileID: 0}
   inventoryInterface: {fileID: 0}
   itemPrefab: {fileID: 3170572531446942545, guid: 1b3091d7e7ebf8b4caab2ff44fd5916c, type: 3}
-  groundContainerPrefab: {fileID: 0}
+  groundContainerPrefab: {fileID: 8522513079430094824, guid: a661c5c55268c334bbf36cb98777a3a2, type: 3}
   itemRightClick: {fileID: 0}
   equipableRightClick: {fileID: 0}
   EquipBut: {fileID: 0}
@@ -408,6 +408,20 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8065704ccf3a5804d968c6ed30a0cf4d, type: 2}
   - {fileID: 11400000, guid: 381b3ebdee70ee649a4db5a6f21d64f7, type: 2}
   - {fileID: 11400000, guid: e570327dcfe67f84abd923e64a4420c1, type: 2}
+  - {fileID: 11400000, guid: 9c4e5c9278975bb41b20f8526d973b38, type: 2}
+  - {fileID: 11400000, guid: cd659398860f1b44b85202983068767b, type: 2}
+  - {fileID: 11400000, guid: d51597800181f3544b8871b186fe8b2e, type: 2}
+  - {fileID: 11400000, guid: d4f5459ffd4ff144f836c5ec5bd24667, type: 2}
+  - {fileID: 11400000, guid: f8786df8d5cecd9468c1770721016cf2, type: 2}
+  - {fileID: 11400000, guid: aa43fe43674912e44b4fb62ad571ba17, type: 2}
+  - {fileID: 11400000, guid: 3763fae455a894749b34a370dbf03384, type: 2}
+  - {fileID: 11400000, guid: ede81cf91ba63854b83cb7a21c27d1ac, type: 2}
+  - {fileID: 11400000, guid: 9cdfd46b0dc13f74f8bf2b57e3022dad, type: 2}
+  - {fileID: 11400000, guid: 914c8162da8f8ea4fb6c95a1b1c6c5cb, type: 2}
+  - {fileID: 11400000, guid: 27d961e67f6fff44d84f786f3d62e32b, type: 2}
+  - {fileID: 11400000, guid: 2f9edfeb598ff1f49b7bc7bdd1e7609a, type: 2}
+  - {fileID: 11400000, guid: 4afa8877b152bed4eae17d402d61b29d, type: 2}
+  - {fileID: 11400000, guid: a3d17469723dc344b968f31d670d9e9d, type: 2}
   canvasTransform: {fileID: 0}
   totalWeightText: {fileID: 0}
   lootLabel: {fileID: 0}
@@ -550,12 +564,16 @@ MonoBehaviour:
   EscapeMenu: {fileID: 0}
   InventoryUI: {fileID: 0}
   QuestUI: {fileID: 0}
+  SettingsMenu: {fileID: 0}
   i_Controller: {fileID: 6779232419128447068}
   t_Manager: {fileID: 0}
+  weaponHandler: {fileID: 0}
   i_Grid: {fileID: 0}
   CompleteTaskList:
   - {fileID: 11400000, guid: 1a19929b3869dd34e9305d81d29aa2c4, type: 2}
   - {fileID: 11400000, guid: 5d948690664621b4cb5cb3ebb411313f, type: 2}
+  actions: {fileID: 0}
+  saveGrid: {fileID: 0}
 --- !u!1 &6779232419584409148
 GameObject:
   m_ObjectHideFlags: 0

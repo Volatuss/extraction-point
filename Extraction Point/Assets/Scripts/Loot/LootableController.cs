@@ -7,9 +7,12 @@ public class LootableController : MonoBehaviour
     public string containerName { get; set; }
     public InventoryController inventoryController { get; set; }
     public Dictionary<Vector2, ItemData> itemsInContainer { get; set; }
-    public bool isOpen = false;
+    public List<ItemData> lootPool;
+    public int maxItems;
+    public bool isOpen = false, isRandomLoot = false;
     public InteractToolTips tooltipController;
     
+
     
 
     private void Update() {

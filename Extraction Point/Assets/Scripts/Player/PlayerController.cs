@@ -14,9 +14,6 @@ public class PlayerController : MonoBehaviour
     public static bool isObjectLootable = false, isNPCLabel = false, isQuestOpen = false, isPod = false;
     public static GameObject container;
 
-    private int currentInteractionPrompts = 0;
-    
-
     void Update()
     {
         fieldOfView.SetOrigin(transform.position);

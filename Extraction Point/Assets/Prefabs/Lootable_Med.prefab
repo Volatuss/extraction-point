@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9211207834951285348}
   - component: {fileID: 9211207834951285349}
-  - component: {fileID: 9211207834951285350}
+  - component: {fileID: 7996653939547647735}
   m_Layer: 0
   m_Name: Lootable_Med
   m_TagString: Container
@@ -26,10 +26,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9211207834951285351}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.47, y: -2.74, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 4562247129399877453}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -73,9 +74,9 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
-  m_Color: {r: 0, g: 1, b: 0.033422947, a: 1}
+  m_SortingOrder: 4
+  m_Sprite: {fileID: -1365382122, guid: 39c35ca68aa28c94b8d0509f53a20963, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -85,7 +86,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &9211207834951285350
+--- !u!114 &7996653939547647735
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -94,12 +95,122 @@ MonoBehaviour:
   m_GameObject: {fileID: 9211207834951285351}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 855ba65893d326e48a9e225e6746d211, type: 3}
+  m_Script: {fileID: 11500000, guid: 43ea5efeb96f39d49ab64c4b08af192e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LootPool:
+  lootPool:
   - {fileID: 11400000, guid: f2092c0b7b7b1de42b8403bfadb3d3a7, type: 2}
   - {fileID: 11400000, guid: b3cfd8ad46337964ea9e585d2a9a1de9, type: 2}
   - {fileID: 11400000, guid: 381b3ebdee70ee649a4db5a6f21d64f7, type: 2}
-  ContainerType: Medical
-  GeneratedLoot: []
+  - {fileID: 11400000, guid: 635f4fed9d7c8c04f9a33bc32677f7da, type: 2}
+  - {fileID: 11400000, guid: 4ae490e1741eb4a4b8702cb2296dac99, type: 2}
+  maxItems: 6
+  isOpen: 0
+  isRandomLoot: 1
+  tooltipController: {fileID: 0}
+--- !u!1001 &3876446385018229198
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 9211207834951285348}
+    m_Modifications:
+    - target: {fileID: 764412254790028931, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 764412254790028931, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 764412254790028931, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 764412254790028931, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 764412254790028931, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 764412254790028931, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 764412254790028931, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 764412254790028931, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 764412254790028931, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 764412254790028931, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 764412254790028931, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1456786225738070441, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: m_Radius
+      value: 0.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 1456786225738070441, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: m_Offset.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1456786225738070441, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: m_Offset.y
+      value: -0.33
+      objectReference: {fileID: 0}
+    - target: {fileID: 2069558078119658800, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: m_Name
+      value: InteractableCircle
+      objectReference: {fileID: 0}
+    - target: {fileID: 5577499788448931512, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: actionDescription
+      value: Loot
+      objectReference: {fileID: 0}
+    - target: {fileID: 5577499788448931512, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: interactAction.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5577499788448931512, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: interactAction.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5577499788448931512, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: interactAction.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7996653939547647735}
+    - target: {fileID: 5577499788448931512, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: interactAction.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5577499788448931512, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: interactAction.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OpenContainer
+      objectReference: {fileID: 0}
+    - target: {fileID: 5577499788448931512, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: interactAction.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: LootableController, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5577499788448931512, guid: f6824999d73e68841adf32539405569c, type: 3}
+      propertyPath: interactAction.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f6824999d73e68841adf32539405569c, type: 3}
+--- !u!4 &4562247129399877453 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 764412254790028931, guid: f6824999d73e68841adf32539405569c, type: 3}
+  m_PrefabInstance: {fileID: 3876446385018229198}
+  m_PrefabAsset: {fileID: 0}

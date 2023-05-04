@@ -16,6 +16,9 @@ public class TaskManager : MonoBehaviour
 
     private void Awake() {
         starterTask = firstTask;
+        if(CurrentTasks.Count == 0){
+            CurrentTasks.Add(starterTask);
+        }
     }
 
     private void OnEnable() {
@@ -75,8 +78,13 @@ public class TaskManager : MonoBehaviour
 
     internal void LoadTaskLists(List<TaskOBJ> cur_tasks, List<TaskOBJ> comp_tasks)
     {
-        CurrentTasks = cur_tasks;
-        CompletedTasks = comp_tasks;
+        if(cur_tasks.Count == 0 && comp_tasks.Count == 0){
+            CurrentTasks.Add(starterTask);
+            CompletedTasks = comp_tasks;
+        }else{
+            CurrentTasks = cur_tasks;
+            CompletedTasks = comp_tasks;
+        }
     }
 
     public static void ResetTasks(){

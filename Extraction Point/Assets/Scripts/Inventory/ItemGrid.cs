@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class ItemGrid : MonoBehaviour
 {
-    public const float tileSizeWidth = 48;
-    public const float tileSizeHeight = 48;
+    public static float tileSizeWidth = 48 ;
+    public static float tileSizeHeight = 48 ;
     [SerializeField] public int gridSizeWidth = 10, gridSizeHeight = 14;
     [SerializeField] GameObject inventoryItemPrefab;
     public List<InventoryItem> inventoryItemsInGrid = new List<InventoryItem>();
@@ -18,66 +18,63 @@ public class ItemGrid : MonoBehaviour
     InventoryItem[,] inventoryItemSlot;
     public int itemCount = 0;
 
-    private void Start() 
+    private void Awake() 
     {
         rectTransform = GetComponent<RectTransform>();
         Init(gridSizeWidth, gridSizeHeight);
         
     }
 
-    public void DisplayContents(){
-        Debug.Log("Start of Display");
-        
+    public void DisplayContents(){ //           ********** TEST FUNCTION, CAN BE REMOVED ***********
         String toDisplay = "@";
-        for(int x = 0; x < gridSizeHeight; x++){
-            for(int y = 0; y < gridSizeWidth; y++){
+        for(int x = 0; x < gridSizeHeight; x++)
+        {
+            for(int y = 0; y < gridSizeWidth; y++)
+            {
                 //Debug.Log(x+", "+y);
-                if(inventoryItemSlot[y,x] == null){
+                if(inventoryItemSlot[y,x] == null)
+                {
                     toDisplay = toDisplay + "0 ";
-                }else{
+                }else
+                {
                     toDisplay = toDisplay + inventoryItemSlot[y,x].itemData.itemID.ToString() + " ";
                 }
             }
             toDisplay = toDisplay + "@";
-            
         }
-        
         toDisplay = toDisplay.Replace("@", "" + System.Environment.NewLine);
         Debug.Log(toDisplay);
         Debug.Log("End of Display");
     }
 
-
-    public bool ContainsItem(ItemData itemData){
-        
-        for(int x = 0; x < gridSizeHeight; x++){
-            for(int y = 0; y < gridSizeWidth; y++){
-                
-                    
-                if(inventoryItemSlot[y,x].itemData == itemData){
-                    return true;
+    public Vector2Int? ContainsItem(ItemData itemData)
+    {
+        for(int x = 0; x < gridSizeHeight; x++)
+        {
+            for(int y = 0; y < gridSizeWidth; y++)
+            {
+                if(inventoryItemSlot[y,x].itemData == itemData)
+                {
+                    return new Vector2Int(x, y);
                 }
             }
         }
-        return false;
+        return null;
     }
 
     public InventoryItem PickUpItem(int x, int y)
     {
         InventoryItem toReturn = inventoryItemSlot[x, y];
-        
-
-        if (toReturn == null) { return null; }
-
+        if (toReturn == null) { return null; } 
         CleanGridReference(toReturn);
         itemCount--;
-
         return toReturn;
     }
 
     public void CleanGridReference(InventoryItem item)
     {
-        if(transform.name == "InvGrid"){
+        if(transform.name == "InvGrid")
+        {
             InventoryController.InventoryItems.Remove(new Vector2(item.onGridPositionX, item.onGridPositionY));
         }
         itemsInGrid.Remove(new Vector2(item.onGridPositionX, item.onGridPositionY));
@@ -109,8 +106,8 @@ public class ItemGrid : MonoBehaviour
         positionOnTheGrid.x = mousePosition.x - rectTransform.position.x;
         positionOnTheGrid.y = rectTransform.position.y - mousePosition.y;
         //calculate tile grid position
-        tileGridPosition.x = (int)(positionOnTheGrid.x / tileSizeWidth);
-        tileGridPosition.y = (int)(positionOnTheGrid.y / tileSizeHeight);
+        tileGridPosition.x = (int)(positionOnTheGrid.x / (tileSizeWidth * (Screen.width / 1920f) ));
+        tileGridPosition.y = (int)(positionOnTheGrid.y / (tileSizeHeight * (Screen.height / 1080f) ));
 
         return tileGridPosition;
     }
@@ -123,9 +120,15 @@ public class ItemGrid : MonoBehaviour
         {
             for(int x = 0; x<width; x++)
             {
-                if(CheckAvailableSpace(x,y, itemToInsert.HEIGHT, itemToInsert.WIDTH) == true)
+                if(CheckAvailableSpace(x,y, itemToInsert.HEIGHT, itemToInsert.WIDTH, itemToInsert) == true)
                 {
-                    return new Vector2Int(x,y);
+                    if(inventoryItemSlot[x, y] != null){ //if there is a stackable item here then we need to return null still i think
+                        Debug.Log("Stackable");
+                        return new Vector2Int(-999, -999);
+                    }else{
+                        return new Vector2Int(x,y);
+                    }
+                    
                 }
             }
         }
@@ -144,13 +147,12 @@ public class ItemGrid : MonoBehaviour
 
     public bool PlaceItem(InventoryItem inventoryItem, int posX, int posY, ref InventoryItem overlapItem)
     {
-        
 
         if (BoundryCheck(posX, posY, inventoryItem.WIDTH, inventoryItem.HEIGHT) == false)
         {
             return false;
         }
-        if (OverlapCheck(posX, posY, inventoryItem.WIDTH, inventoryItem.HEIGHT, ref overlapItem) == false)
+        if (OverlapCheck(posX, posY, inventoryItem.WIDTH, inventoryItem.HEIGHT, ref overlapItem, ref inventoryItem) == false)
         {
             overlapItem = null;
             return false;
@@ -158,26 +160,56 @@ public class ItemGrid : MonoBehaviour
 
         if (overlapItem != null)
         {
-            CleanGridReference(overlapItem);
-        }
+            
+            if(overlapItem.itemData.itemID == inventoryItem.itemData.itemID  &&  inventoryItem.itemData.maxStackSize > 1)
+            {
+                if(inventoryItem.currentStackSize + overlapItem.currentStackSize <= inventoryItem.itemData.maxStackSize)
+                {
+                    inventoryItem.currentStackSize += overlapItem.currentStackSize;
+                    inventoryItem.UpdateCounter();
+                    AddToStack(overlapItem);
+                }else
+                {
+                    if(inventoryItem.currentStackSize >= overlapItem.currentStackSize)
+                    {
+                        //dont change anything, simply add what you can to it
+                        int remainderItems = inventoryItem.currentStackSize + overlapItem.currentStackSize - inventoryItem.itemData.maxStackSize;
+                        inventoryItem.currentStackSize = inventoryItem.itemData.maxStackSize;
+                        overlapItem.currentStackSize = remainderItems;
+                        inventoryItem.UpdateCounter();
+                        overlapItem.UpdateCounter();
+                    }
+                    CleanGridReference(overlapItem);
+                }
+            }else
+            {
+                //either not same item or item is not stackable
+                CleanGridReference(overlapItem);
+            }
+        }  
         PlaceItem(inventoryItem, posX, posY);
-        
-
-
         return true;
+    }
+
+    public void AddToStack(InventoryItem inventoryItem)
+    {
+        Destroy(inventoryItem.gameObject);
+        
+        CleanGridReference(inventoryItem);
+        
     }
 
     public void PlaceItem(InventoryItem inventoryItem, int posX, int posY)
     {
         RectTransform rectTransform = inventoryItem.GetComponent<RectTransform>();
 
-        if(transform.name == "InvGrid"){
+        if(transform.name == "InvGrid")
+        {
             InventoryController.InventoryItems.Add(new Vector2(posX, posY), inventoryItem.itemData);
         }
         itemsInGrid.Add(new Vector2(posX, posY), inventoryItem.itemData);
         inventoryItemsInGrid.Add(inventoryItem);
         //InventoryItem itemToWeigh = inventoryItem;
-
         rectTransform.SetParent(this.rectTransform);
         for (int x = 0; x < inventoryItem.WIDTH; x++)
         {
@@ -198,21 +230,26 @@ public class ItemGrid : MonoBehaviour
     public Vector2 CalculatePositionOnGrid(InventoryItem inventoryItem, int posX, int posY)
     {
         Vector2 position = new Vector2();
-
         position.x = posX * tileSizeWidth + tileSizeWidth * inventoryItem.WIDTH / 2;
         position.y = -(posY * tileSizeHeight + tileSizeHeight * inventoryItem.HEIGHT / 2);
         return position;
     }
 
-    public bool OverlapCheck(int posX, int posY, int width, int height, ref InventoryItem overlapItem){
-        for(int x = 0; x < width; x++){
-            for(int y = 0; y < height; y++){
-                if((inventoryItemSlot[posX + x, posY + y]) != null){
-                   if(overlapItem == null){
+    public bool OverlapCheck(int posX, int posY, int width, int height, ref InventoryItem overlapItem, ref InventoryItem itemToPlace){
+        for(int x = 0; x < width; x++)
+        {
+            for(int y = 0; y < height; y++)
+            {
+                if((inventoryItemSlot[posX + x, posY + y]) != null)
+                {
+                    if(overlapItem == null){
+                        
                         overlapItem = inventoryItemSlot[posX + x, posY + y];
                     }else{
-                        if(overlapItem != inventoryItemSlot[posX + x, posY + y]){
-                            return false;               
+                        if(overlapItem != inventoryItemSlot[posX + x, posY + y])
+                        {
+                            
+                            return false;          
                         }   
                    }
                 }
@@ -221,40 +258,68 @@ public class ItemGrid : MonoBehaviour
         return true;
     }
 
-    public bool CheckAvailableSpace(int posX, int posY, int width, int height){ //for inserting item and checking where it can go
-        for(int y = 0; y < width; y++){
-            for(int x = 0; x < height; x++){
-                if((inventoryItemSlot[posX + x, posY + y]) != null){
-                    return false;
+    public bool CheckAvailableSpace(int posX, int posY, int width, int height, InventoryItem inventoryItem){ //for inserting item and checking where it can go
+        for(int y = 0; y < width; y++)
+        {
+            for(int x = 0; x < height; x++)
+            {
+                if((inventoryItemSlot[posX + x, posY + y]) != null)
+                {
+                    if(inventoryItem.itemData == inventoryItemSlot[posX + x, posY + y].itemData && inventoryItem.itemData.maxStackSize > 1)
+                    {
+                        //items can be stacked
+                        if(inventoryItemSlot[posX + x, posY + y].currentStackSize + inventoryItem.currentStackSize <= inventoryItemSlot[posX + x, posY + y].itemData.maxStackSize)
+                        {
+                            inventoryItemSlot[posX + x, posY + y].currentStackSize += inventoryItem.currentStackSize;
+                            inventoryItemSlot[posX + x, posY + y].UpdateCounter();
+                            // Dont insert the item because this can fit in a preexisting stack just fine, destroy the new item and return true to break out.
+                            Destroy(inventoryItem.gameObject);
+                            return true;
+                        }else if(inventoryItemSlot[posX + x, posY + y].currentStackSize >= inventoryItem.currentStackSize)
+                        { 
+                            int remainderItems = inventoryItemSlot[posX + x, posY + y].currentStackSize + inventoryItem.currentStackSize - inventoryItemSlot[posX + x, posY + y].itemData.maxStackSize;
+                            inventoryItemSlot[posX + x, posY + y].currentStackSize = inventoryItemSlot[posX + x, posY + y].itemData.maxStackSize;
+                            inventoryItem.currentStackSize = remainderItems;
+                            inventoryItemSlot[posX + x, posY + y].UpdateCounter();
+                            inventoryItem.UpdateCounter();
+                            return false;
+                        }
+                    }else
+                    {
+                        
+                        return false;
+                    }     
                 }
             }
         }
-        
         return true;
     }
 
-    bool PositionCheck(int posX, int posY){ //checks if position is valid for item
-        if(posX<0 || posY<0){
+    bool PositionCheck(int posX, int posY) //checks if position is valid for item
+    { 
+        if(posX<0 || posY<0)
+        {
             return false;
         }
-        if(posX>= gridSizeWidth || posY>=gridSizeHeight){
+        if(posX>= gridSizeWidth || posY>=gridSizeHeight)
+        {
             return false;
         }
-
         return true;
     }
 
-    public bool BoundryCheck(int posX, int posY, int width, int height){
+    public bool BoundryCheck(int posX, int posY, int width, int height)
+    {
         if(PositionCheck(posX, posY) == false){return false;}//check top left
         posX += width - 1;
         posY += height - 1;
         if(PositionCheck(posX, posY) == false){return false;}//check bot right
-
         return true;
     }
 
     public bool isLootGrid(){
-        if(inventoryType.CompareTo("LootInv") == 0){
+        if(inventoryType.CompareTo("LootInv") == 0)
+        {
             return true;
         }
         return false;
@@ -262,11 +327,10 @@ public class ItemGrid : MonoBehaviour
 
     public void ClearLootGrid(){
         ClearWholeGrid();
-        
-        foreach(InventoryItem item in inventoryItemsInGrid){
+        foreach(InventoryItem item in inventoryItemsInGrid)
+        {
             Destroy(item.gameObject);
         }
-        
         inventoryItemsInGrid.Clear();
         itemsInGrid.Clear();
     }

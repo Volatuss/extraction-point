@@ -11,6 +11,7 @@ public static class ConvertToSerializable
         public int itemId { get; set; }
         public float xCoord { get; set; }
         public float yCoord { get; set; }
+        public int quantity {get; set; }
     }
 
     public class InventoryContents
@@ -25,25 +26,31 @@ public static class ConvertToSerializable
         List<ItemAsString> iList = new List<ItemAsString>();
 
         foreach(var item in toConvert){
-            iList.Add(new ItemAsString() {name = item.Value.name, itemId = item.Value.itemID, xCoord = item.Key.x, yCoord = item.Key.y} );
+            iList.Add(new ItemAsString() {name = item.Value.name, itemId = item.Value.itemID, xCoord = item.Key.x, yCoord = item.Key.y, quantity = item.Value.currentStackSize} );
+            
         }
 
         InventoryContents toReturn = new InventoryContents() {contents = iList };
-        
         
         return toReturn;
 
     }
 
-    public static Dictionary<Vector2, int> i_ConvertFrom(InventoryContents contents)
+    public static Dictionary<Vector2, Vector2> i_ConvertFrom(InventoryContents contents)
     {
         List<ItemAsString> toConvert = contents.contents;
 
-        Dictionary<Vector2, int> toReturn = new Dictionary<Vector2, int>();
+        Dictionary<Vector2, Vector2> toReturn = new Dictionary<Vector2, Vector2>();
 
         foreach(ItemAsString item in toConvert)
-        {
-            toReturn.Add(new Vector2(item.xCoord, item.yCoord), item.itemId);
+        {   
+            if(toReturn.ContainsKey(new Vector2(item.xCoord, item.yCoord))){
+                Debug.Log("Null item");
+            }else{
+                // toReturn.Add(new Vector2(item.xCoord, item.yCoord), item.itemId);
+                toReturn.Add(new Vector2(item.xCoord, item.yCoord), new Vector2(item.itemId, item.quantity));
+            }
+
         }
 
         return toReturn;

@@ -24,10 +24,10 @@ public class PlayerData
         health = PlayerHealth.currentHealth;
         
         
-        //inventory items
+        //inventory items, need to make count
         TotalItemsInInventory = InventoryController.InventoryItems.Count;
         ItemsInInventory  = ConvertToSerializable.i_ConvertTo(InventoryController.InventoryItems);
-
+        InventoryController.InventoryItems.Clear();
         //need to do with equipment slots
 
         //need to do similar thing with stash

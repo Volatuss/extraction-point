@@ -148,6 +148,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectileLifetime: 10
+  damageMin: 10
+  damageMax: 20
+  speed: 0
 --- !u!96 &-4983851448867403786
 TrailRenderer:
   serializedVersion: 2

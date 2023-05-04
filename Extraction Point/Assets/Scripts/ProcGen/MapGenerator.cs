@@ -6,15 +6,18 @@ using UnityEngine;
 public class MapGenerator : MonoBehaviour
 {
     public static string CurrentStage = "";
-    public static Vector2 SpawnPosition;
+    public static Vector2 SpawnPosition = Vector2.zero;
     public int[,] map; //grid of ints, 0 = empty, 1 = wall
     [SerializeField] [Range(0, 100)] public int randomFillPercent, treeDensity, rockDensity; //density of walls to empty tiles
     [SerializeField] bool useRandomSeed = false;
     [SerializeField] public int mapHeight, mapWidth, smoothingIterations = 7;
     [SerializeField] String seed;
     [HideInInspector] public int xChunks, yChunks, totalChunks, spawnPadding, chunkSize = 16, spawnChunk;
-    public static Transform playerTransform;
+    
+    public static Transform playerTransform = null;
     private int [,] chunkMap;
+    public List<Vector2> s_BuildOrigin = new List<Vector2>(), m_BuildOrigin = new List<Vector2>(), l_BuildOrigin = new List<Vector2>();
+
     private int[] spawnChunks;
     private System.Random pseudoRandom;
 
@@ -42,6 +45,14 @@ public class MapGenerator : MonoBehaviour
             Debug.Log(chunkMap[3, 3]);
             
         }
+    }
+    
+    public static void ResetStatics(){
+        CurrentStage = "";
+        SpawnPosition = Vector2.zero;
+        MapBuilder.beginBuilding = false;
+        MapBuilder.finishedBuilding = false;
+        playerTransform = null;
     }
 
     private void GenerateMap()
@@ -172,7 +183,6 @@ public class MapGenerator : MonoBehaviour
                 i--;
             }
         }
-        
     }
 
     private bool CheckSurroundTiles(int tileCountX, int tileCountY, int x, int y){
@@ -205,18 +215,20 @@ public class MapGenerator : MonoBehaviour
         while(largePlaced < 1 ){
             int randX = UnityEngine.Random.Range(5, mapWidth-5);
             int randY = UnityEngine.Random.Range(5, mapHeight-5);
-            if(map[randX, randY] == 0  && !BorderChunkCheck(randX, randY) && CheckSurroundTiles(20, 15, randX, randY)){
+            if(map[randX, randY] == 0  && !BorderChunkCheck(randX, randY) && CheckSurroundTiles(16, 16, randX, randY)){
                 map[randX, randY] = 8;
-                ReserveArea(randX, randY, 20, 15);
+                l_BuildOrigin.Add(new Vector2(randX, randY));
+                ReserveArea(randX, randY, 16, 16);
                 largePlaced++;
             }
         }
         while(medPlaced < 2 ){
             int randX = UnityEngine.Random.Range(5, mapWidth-5);
             int randY = UnityEngine.Random.Range(5, mapHeight-5);
-            if(map[randX, randY] == 0  && CheckSurroundTiles(15, 15, randX, randY)){
+            if(map[randX, randY] == 0  && CheckSurroundTiles(16, 16, randX, randY)){
                 map[randX, randY] = 8;
-                ReserveArea(randX, randY, 15, 15);
+                m_BuildOrigin.Add(new Vector2(randX, randY));
+                ReserveArea(randX, randY, 16, 16);
                 medPlaced++;
             }
         }
@@ -225,6 +237,7 @@ public class MapGenerator : MonoBehaviour
             int randY = UnityEngine.Random.Range(5, mapHeight-5);
             if(map[randX, randY] == 0  && CheckSurroundTiles(8, 8, randX, randY)){
                 map[randX, randY] = 8;
+                s_BuildOrigin.Add(new Vector2(randX, randY));
                 ReserveArea(randX, randY, 8, 8);
                 smallPlaced++;
             }

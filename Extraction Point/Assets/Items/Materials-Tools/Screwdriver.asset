@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11e0215b1a47e704aaa7ebd879a2403b, type: 3}
+  m_Name: Screwdriver
+  m_EditorClassIdentifier: 
+  itemID: 12
+  width: 1
+  height: 1
+  itemWeight: 0
+  itemName: Screwdriver
+  isWeapon: 0
+  isBackpack: 0
+  isArmor: 0
+  weapon: {fileID: 0}
+  itemIcon: {fileID: 1387547939, guid: a11bc91380ba2be4a8e03cca2408a417, type: 3}

@@ -10,7 +10,6 @@ public class InteractToolTips : MonoBehaviour
     GameObject selector;
     public static Dictionary<int, GameObject> currentActions = new Dictionary<int, GameObject>();
     public int selectedActionIndex;
-    float prevScroll = 0f;
     
     private void Awake() {
         selector = Instantiate(actionHilighter, gameObject.transform);
@@ -54,12 +53,9 @@ public class InteractToolTips : MonoBehaviour
 
     public void ScrollUp()
     {
-        Debug.Log("Scroll Up");
-
         if(selectedActionIndex == currentActions.ElementAt(0).Key)
         {
             
-            Debug.Log("Top of list");
         }else{
             int next = currentActions.Keys.ToList().IndexOf(selectedActionIndex) - 1;
             SelectAction(currentActions.ElementAt(next).Key, currentActions.ElementAt(next).Value);
@@ -70,11 +66,10 @@ public class InteractToolTips : MonoBehaviour
 
     public void ScrollDown()
     {
-        Debug.Log("Scroll Down");
         
         if(selectedActionIndex == currentActions.ElementAt(currentActions.Count-1).Key)
         {
-            Debug.Log("Bottom of list");
+
         }else{
             int next = currentActions.Keys.ToList().IndexOf(selectedActionIndex) + 1;
             SelectAction(currentActions.ElementAt(next).Key, currentActions.ElementAt(next).Value);

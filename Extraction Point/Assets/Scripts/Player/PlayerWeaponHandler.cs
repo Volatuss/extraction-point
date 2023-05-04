@@ -9,21 +9,25 @@ public class PlayerWeaponHandler : MonoBehaviour
 {
     
     [SerializeField] TextMeshProUGUI ammoCounter;
-    [SerializeField] GameObject equippedWeapon;
+    [SerializeField] GameObject equippedWeapon, progressBar, progressContainer;
+    [SerializeField] AudioSource gunshot;
+    [SerializeField] List<AudioSource> shellList = new List<AudioSource>();
     [SerializeField] float bulletForce = 20f, RPM; //later on this will fetch the rpm from a given weapon scriptable object
     [SerializeField] private GameObject bulletPrefab, aimTransform;
     [SerializeField] ParticleSystem barrelSmoke; //also add muzzle flash and casingEjection
     [SerializeField] private Transform aimGunEndPointTransform, shellEjectPosition;
     [SerializeField] private int magSize = 30; //later this will fetch mag size from scriptable obj
-    private int remainingAmmo = 0, consecShot, currSlotEquipped = 0; //currslot - 1 = primary, 2 = secondary
+    private int remainingAmmo = 0, consecShot, currSlotEquipped = 0, shellCount = 0; //currslot - 1 = primary, 2 = secondary
     private float lastFired = 0.0f;
     private Vector3 shellMoveDir;
     public bool canShoot = true, isFiring = false, isAiming = false, weaponEquipped = true;
     private Animator aimAnimator;
     private SpriteRenderer weapSR;
+    private RectTransform progressBarRect;
     
 
     private void Awake() {
+        progressBarRect = progressBar.GetComponent<RectTransform>();
         //aimAnimator = aimTransform.GetComponent<Animator>();
         consecShot = 0;
         UpdateAmmoCounter();
@@ -53,10 +57,6 @@ public class PlayerWeaponHandler : MonoBehaviour
         
         if(!weaponEquipped){return; }
         HandleAiming();
-        if(Input.GetKeyDown(KeyCode.R) && remainingAmmo < magSize){
-            canShoot = false;
-            StartCoroutine(ReloadRoutine());
-        }
 
         if(Input.GetMouseButtonDown(0) && canShoot && (Time.time - lastFired) >= 60f/RPM){     
             isFiring = true;              
@@ -79,6 +79,14 @@ public class PlayerWeaponHandler : MonoBehaviour
 
     }
 
+
+    public void Reload(){
+        if(remainingAmmo < magSize){
+            canShoot = false;
+            StartCoroutine(ReloadRoutine());
+        }
+    }
+
     IEnumerator FireAutomatic(){
         while(isFiring && consecShot < magSize && remainingAmmo >= 1){
             remainingAmmo--;
@@ -93,7 +101,18 @@ public class PlayerWeaponHandler : MonoBehaviour
     }
 
     IEnumerator ReloadRoutine(){
-        yield return new WaitForSeconds(2f);
+        progressContainer.SetActive(true);
+        float timeElapsed = 0.0f, progressPoint = progressBarRect.sizeDelta.x / 20, progress = 0;
+        while(true){
+            progress+=progressPoint;
+            progressBarRect.sizeDelta = new Vector2(progress, progressBarRect.sizeDelta.y);
+            timeElapsed+=.1f;
+            yield return new WaitForSeconds(.1f);
+            if(timeElapsed >= 2f){
+                break;
+            }
+        }
+        progressContainer.SetActive(false);
         canShoot = true;
         remainingAmmo = magSize;
         UpdateAmmoCounter();
@@ -193,9 +212,7 @@ public class PlayerWeaponHandler : MonoBehaviour
 
     public void HandleShooting(int consecutiveShot){
 
-        //aimAnimator.SetTrigger("shoot"); where we call the anim for muzzle flash 
-        
-        
+        //aimAnimator.SetTrigger("shoot"); where we call the anim for muzzle flash
         GameObject bullet = Instantiate(bulletPrefab, aimGunEndPointTransform.position, aimGunEndPointTransform.rotation );
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
         
@@ -214,6 +231,15 @@ public class PlayerWeaponHandler : MonoBehaviour
         }
         barrelSmoke.Play();     
         StartCoroutine(ScreenShake(.1f, .1f));
+        gunshot.Play();
+        
+        shellList[shellCount].pitch = 1f + Random.Range(-.2f, .4f);
+        shellList[shellCount].PlayDelayed(.4f);
+        shellCount++;
+        if(shellCount == 4){
+            shellCount = 0;
+        }
+        
         Vector3 quadPosition = shellEjectPosition.position;
         Vector3 quadSize =  new Vector3(.1f,.1f);
         
@@ -221,14 +247,15 @@ public class PlayerWeaponHandler : MonoBehaviour
         Vector3 shellDir = ApplyRotationToVector(aimDirection, UnityEngine.Random.Range(-100f, -80f));       
 
         float angle = GetAngleOfAim();
-
-        if (angle > 90 || angle < -90)
-        {
-            ShellParticleSystemHandler.Instance.SpawnShell(quadPosition, -1f * shellDir);
-        }
-        else
-        {
-            ShellParticleSystemHandler.Instance.SpawnShell(quadPosition, shellDir);
+        if(PlayerPrefs.GetInt("showShells", 1) == 1){
+            if (angle > 90 || angle < -90)
+            {
+                ShellParticleSystemHandler.Instance.SpawnShell(quadPosition, -1f * shellDir);
+            }
+            else
+            {
+                ShellParticleSystemHandler.Instance.SpawnShell(quadPosition, shellDir);
+            }
         }
     }
 

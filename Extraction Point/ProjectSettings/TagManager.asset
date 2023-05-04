@@ -12,6 +12,8 @@ TagManager:
   - FriendlyNPC
   - UserInterface
   - Utility
+  - HitBox
+  - Extract
   layers:
   - Default
   - TransparentFX
@@ -22,7 +24,7 @@ TagManager:
   - Mask
   - BehindMask
   - Black
-  - 
+  - Player
   - 
   - 
   - 

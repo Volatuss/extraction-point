@@ -29,7 +29,7 @@ public class Interactable : MonoBehaviour
     
 
     private void OnTriggerEnter2D(Collider2D other) {
-        if(other.gameObject.CompareTag("Player")){
+        if(other.gameObject.CompareTag("HitBox")){
             AddToolTip();
             isInRange = true;
 
@@ -37,7 +37,7 @@ public class Interactable : MonoBehaviour
     }
 
     private void OnTriggerExit2D(Collider2D other) {
-        if(other.gameObject.CompareTag("Player")){
+        if(other.gameObject.CompareTag("HitBox")){
             RemoveToolTip();
             isInRange = false;
 
